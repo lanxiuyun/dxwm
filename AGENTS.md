@@ -1,92 +1,103 @@
 # AGENTS.md
 
-## Project Overview
+## Product Definition
 
-This repository contains a frontend quiz game built with React and Vite.
+Project name:
+- `大学文凭能有多文盲`
 
-Primary goals:
-- Keep the app lightweight and easy to extend.
-- Focus on a polished single-page quiz experience.
-- Treat the current implementation as a frontend-first prototype.
+Project purpose:
+- Build a lightweight web quiz game that tests whether college students can still answer basic school-level questions.
+- The tone can be lightly satirical, but the interaction should stay simple and direct.
+- The key idea is contrast: these should look like easy points, so failure itself becomes the message.
 
-## Tech Stack
+Current delivery scope:
+- Frontend-only React site
+- Subject selection before each round
+- Multiple-choice questions only
+- Local static question bank in the repo
+- Mobile-first single-screen gameplay
 
-- React 18
-- Vite 5
-- Plain CSS
+Current content scope:
+- Use easy school-level questions for now
+- Topics include `语文` `数学` `英语` `物理` `化学`
+- Do not overcomplicate the first version with difficult or niche questions
+
+## Build Rules
+
+- Use `pnpm` as the package manager
+- Use React with Vite
+- Keep the implementation lightweight
+- Avoid routing, global state libraries, or backend code unless explicitly requested
 
 ## Repository Structure
 
-- `index.html`: Vite HTML entry
+- `index.html`: Vite entry
 - `src/main.jsx`: React bootstrap
-- `src/App.jsx`: quiz game logic and UI composition
-- `src/styles.css`: global styles and responsive layout
-- `package.json`: scripts and dependencies
+- `src/App.jsx`: page flow and gameplay state
+- `src/data/questions.js`: local quiz bank by subject
+- `src/styles.css`: mobile-first UI styles
+- `DEVELOPMENT_PLAN.md`: current project plan
 
-## Run Commands
+## Product Requirements
 
-Use `pnpm` for package management.
+- The homepage must be concise
+- Users must be able to choose a subject before answering questions
+- Each question must be multiple choice
+- Clicking an option should immediately lock the answer
+- The game should auto-advance to the next question after a very short delay
+- The last question should auto-enter the result screen
+- The result screen should show score, accuracy, and simple review items
 
-```bash
-pnpm install
-pnpm dev
-pnpm build
-pnpm preview
-```
+## Content Rules
 
-## Coding Expectations
-
-- Keep components simple and readable.
-- Prefer functional React components and hooks.
-- Do not introduce a state library unless the app actually needs it.
-- Keep styles in `src/styles.css` unless there is a clear reason to split them.
-- Preserve the current game-like visual direction; do not regress into a generic form UI.
-
-## Quiz Data
-
-- The question bank currently lives in `src/App.jsx`.
-- If the question set grows, move it into a dedicated module such as `src/data/questions.js`.
-- Keep question objects consistent:
+- Questions should feel like basic school knowledge, not trivia-night gimmicks
+- Wording should be direct and familiar to Chinese users
+- Prefer obvious-answer questions that expose weak fundamentals when answered wrong
+- Keep each question object consistent:
   - `id`
-  - `category`
+  - `subject`
   - `prompt`
   - `options`
   - `answer`
-  - `insight`
+  - `explanation`
+  - `level`
 
-## UI and Product Guidance
+## UX Guidance
 
-- This is a quiz game, not a survey form.
-- Immediate feedback is preferred over delayed summary-only scoring.
-- Mobile layout must remain usable.
-- Visual changes should feel intentional and energetic.
+- Treat the app like a lightweight mini-game, not a content-heavy website
+- Keep the gameplay screen minimal: progress, score, question, options
+- Remove nonessential helper text during play if it slows the rhythm
+- Prioritize mobile layout first, then scale up cleanly for desktop
+- Avoid large side panels, dense intro sections, or heavy explanatory blocks
 
-## Change Rules
+## Engineering Guidance
 
-- Do not add backend code unless explicitly requested.
-- Do not replace `pnpm` with another package manager.
-- Do not remove existing quiz flow states without replacing them with an equivalent or better interaction.
-- Avoid adding heavy dependencies for small features.
+- Prefer small pure helper functions over abstraction-heavy patterns
+- Keep state local unless complexity proves otherwise
+- Separate question data from rendering logic
+- Do not silently drift away from the “simple game” product direction
 
 ## Validation
 
-Before handing off substantial changes, run:
+Before handoff, run:
 
 ```bash
 pnpm build
 ```
 
-If gameplay logic changes, also manually verify:
-- answer selection
-- score updates
-- next-question flow
-- result screen
-- restart flow
+Manually verify:
+- subject selection
+- mobile layout
+- answer locking
+- 100ms auto-advance behavior
+- score calculation
+- result summary
+- replay flow
 
-## Preferred Next Extensions
+## Next Planned Extensions
 
-- timer mode
-- combo scoring
-- difficulty levels
-- remote question source
-- persistent leaderboard
+- expand question banks for each subject
+- simplify the home screen even further if needed
+- add lightweight motion between questions
+- tune result copy by score band
+- support external question import later if needed
