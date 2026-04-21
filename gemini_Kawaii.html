@@ -1,0 +1,352 @@
+<!-- 为了让界面更符合 Kawaii 美学，我将对现有的“漫画风”进行以下甜系升级：
+
+配色方案：舍弃冷硬的黑白对比，改用马卡龙色系（粉草莓、奶橘色、薄荷绿）。
+
+形状更圆润：将生硬的直角改为超大圆角，增加那种肉乎乎的、软绵绵的视觉感。
+
+动态装饰：加入心形、星星、云朵等漂浮元素，并给按钮加上那种“Q弹”的动画反馈。
+
+软萌字体与表情：使用更具手写感和圆润感的字体效果，增加更多的颜文字（( •̀ ω •́ )y）。
+
+我们现在就把这个“文盲检测”变成一个超级软萌的挑战！
+
+Kawaii 风的设计精髓：
+奶油感 (Creamy Textures)：进度条和按钮不再是锋利的线条，而是看起来像涂了奶油一样顺滑。
+
+糖果色调 (Candy Palette)：大量使用了粉红、鹅黄、嫩绿，营造出一种无害、快乐、甜美的氛围。
+
+Q 弹交互 (Bouncy Animations)：所有的反馈都带有轻微的弹跳效果（animate__bounceIn），点击按钮就像戳中了一块果冻。
+
+软萌话术：题目和反馈文案里加了“木有”、“哒哟”、“喵”等修饰词，配合可爱的颜文字，让答错题也不会感到受挫。
+
+你可以在预览里点一下那些学科按钮，感受一下那种“Duang Duang”的弹跳感！如果你想要更多的粉色泡泡或者更多的星星特效，我可以继续帮你优化！ -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学文凭能有多文盲 - Kawaii Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&display=swap');
+
+        :root {
+            --kawaii-pink: #ffb7c5;
+            --kawaii-blue: #a0e7ff;
+            --kawaii-yellow: #fff3a0;
+            --kawaii-purple: #e2c0ff;
+            --text-main: #5d4a66;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #fff5f7;
+            background-image: 
+                radial-gradient(var(--kawaii-pink) 1.5px, transparent 1.5px),
+                radial-gradient(var(--kawaii-blue) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        /* 软萌超圆角卡片 */
+        .kawaii-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 6px solid #fff;
+            box-shadow: 0 15px 0px rgba(255, 183, 197, 0.4);
+            border-radius: 3rem;
+            width: 100%;
+            max-width: 440px;
+            padding: 2.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 甜美标题 */
+        .kawaii-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            background: linear-gradient(to bottom, #ff8a9e, #ffb7c5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 0px #fff);
+        }
+
+        /* Q弹选项按钮 */
+        .kawaii-option {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            background: #fff;
+            border-radius: 2rem;
+            border: 3px solid var(--kawaii-pink);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 6px 0px var(--kawaii-pink);
+        }
+
+        .kawaii-option:hover {
+            transform: translateY(-4px);
+            background: var(--kawaii-yellow);
+            border-color: #ffd845;
+            box-shadow: 0 10px 0px #ffd845;
+        }
+
+        .kawaii-option:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px transparent;
+        }
+
+        .kawaii-option.correct {
+            background: #c1f9d2;
+            border-color: #55d67b;
+            box-shadow: 0 6px 0px #55d67b;
+        }
+
+        .kawaii-option.wrong {
+            background: #ffd1d1;
+            border-color: #ff7d7d;
+            box-shadow: 0 6px 0px #ff7d7d;
+        }
+
+        .option-bullet {
+            background: var(--kawaii-pink);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* 奶油进度条 */
+        .cream-progress {
+            height: 20px;
+            background: #ffeef2;
+            border-radius: 99px;
+            padding: 4px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--kawaii-pink);
+        }
+
+        .cream-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--kawaii-pink), #ff8a9e);
+            border-radius: 99px;
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        /* 漂浮装饰 */
+        .floating-item {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .hidden { display: none; }
+
+        /* 学科按钮 */
+        .kawaii-subject {
+            background: #fff;
+            border: 3px solid var(--kawaii-blue);
+            border-radius: 2rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 6px 0px var(--kawaii-blue);
+        }
+
+        .kawaii-subject:hover {
+            transform: scale(1.05);
+            background: #f0faff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 漂浮装饰元素 -->
+    <div class="floating-item" style="top: 10%; left: 10%; font-size: 3rem;">☁️</div>
+    <div class="floating-item" style="top: 20%; right: 10%; font-size: 2.5rem; animation-delay: 1s;">⭐️</div>
+    <div class="floating-item" style="bottom: 15%; left: 15%; font-size: 2rem; animation-delay: 2s;">💖</div>
+    <div class="floating-item" style="bottom: 10%; right: 20%; font-size: 2.8rem; animation-delay: 1.5s;">🍬</div>
+
+    <div id="game-container" class="kawaii-card animate__animated animate__bounceIn">
+        
+        <!-- 首页 -->
+        <div id="home-screen">
+            <div class="text-center mb-8">
+                <span class="text-5xl">🍭</span>
+                <h1 class="kawaii-title text-3xl font-black mt-2">文盲大挑战!</h1>
+                <p class="text-pink-400 font-bold mt-1">~ (っ °Д °;)っ 你还能毕业吗 ~</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="kawaii-subject" onclick="startQuiz('chinese', '#ffb7c5')">
+                    <div class="text-4xl mb-1">📖</div>
+                    <div class="font-black text-pink-500">国语文字</div>
+                </div>
+                <div class="kawaii-subject" style="border-color: var(--kawaii-blue); box-shadow: 0 6px 0 var(--kawaii-blue);" onclick="startQuiz('math', '#a0e7ff')">
+                    <div class="text-4xl mb-1">📐</div>
+                    <div class="font-black text-blue-500">奇妙算术</div>
+                </div>
+                <div class="kawaii-subject" style="border-color: #bbf7d0; box-shadow: 0 6px 0 #bbf7d0;" onclick="startQuiz('english', '#bbf7d0')">
+                    <div class="text-4xl mb-1">🔤</div>
+                    <div class="font-black text-green-500">ABC挑战</div>
+                </div>
+                <div class="kawaii-subject" style="border-color: var(--kawaii-purple); box-shadow: 0 6px 0 var(--kawaii-purple);" onclick="startQuiz('science', '#e2c0ff')">
+                    <div class="text-4xl mb-1">🧪</div>
+                    <div class="font-black text-purple-500">神奇科学</div>
+                </div>
+            </div>
+            <div class="text-center text-xs text-pink-300 font-bold">由 超可爱研究所 荣誉出品</div>
+        </div>
+
+        <!-- 答题页 -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-center mb-3 px-2">
+                <span id="subject-tag" class="bg-pink-100 text-pink-500 px-4 py-1 rounded-full text-xs font-black">CHINESE</span>
+                <span class="font-black text-pink-300" id="progress-text">0/5</span>
+            </div>
+            <div class="cream-progress">
+                <div id="progress-fill" class="cream-fill"></div>
+            </div>
+
+            <div class="mb-6">
+                <h3 id="question-text" class="text-xl font-black text-slate-700 text-center px-2">
+                    题目正在飞奔而来...
+                </h3>
+            </div>
+
+            <div id="options-list">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 结果页 -->
+        <div id="result-screen" class="hidden text-center">
+            <div class="text-8xl mb-4 animate__animated animate__pulse animate__infinite">🍮</div>
+            <h2 class="text-3xl font-black text-pink-500 mb-2" id="result-title">结果评价</h2>
+            <p id="result-desc" class="text-slate-500 font-bold mb-8 px-4"></p>
+            <button onclick="location.reload()" class="kawaii-option justify-center bg-pink-400 border-pink-500 text-white hover:bg-pink-300">
+                <span class="font-black">重新挑战 (・ω・)</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            chinese: [
+                { q: "《滕王阁序》作者是谁呀？", a: ["王勃", "韩愈", "柳宗元", "欧阳修"], correct: 0 },
+                { q: "“身无彩凤双飞翼”下一句？", a: ["心有灵犀一点通", "只是当时已惘然", "此情可待成追忆", "谁知盘中餐"], correct: 0 },
+                { q: "哪个词语木有错别字呢？", a: ["针贬时弊", "甘拜下风", "一筹莫展", "按步就班"], correct: 2 }
+            ],
+            math: [
+                { q: "勾股定理中，a² + b² 等于？", a: ["c", "c²", "2c", "c³"], correct: 1 },
+                { q: "一公顷等于多少平方米？", a: ["1,000", "10,000", "100,000", "1,000,000"], correct: 1 }
+            ]
+        };
+
+        let questions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        function startQuiz(sub, color) {
+            questions = quizData[sub] || quizData['chinese'];
+            currentIdx = 0;
+            score = 0;
+            
+            document.getElementById('subject-tag').innerText = sub.toUpperCase();
+            document.documentElement.style.setProperty('--kawaii-pink', color);
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress-text').innerText = `${currentIdx + 1}/${questions.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.a.forEach((txt, i) => {
+                const btn = document.createElement('div');
+                btn.className = 'kawaii-option animate__animated animate__fadeInUp';
+                btn.style.animationDelay = `${i * 0.1}s`;
+                btn.innerHTML = `<div class="option-bullet">${labels[i]}</div><span class="font-bold">${txt}</span>`;
+                btn.onclick = () => handleAnswer(i, btn);
+                list.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(idx, el) {
+            const correct = questions[currentIdx].correct;
+            const options = document.querySelectorAll('.kawaii-option');
+            
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+
+            if (idx === correct) {
+                el.classList.add('correct');
+                score++;
+            } else {
+                el.classList.add('wrong');
+                options[correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentIdx++;
+                if (currentIdx < questions.length) {
+                    renderQuestion();
+                } else {
+                    showFinal();
+                }
+            }, 800);
+        }
+
+        function showFinal() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const ratio = score / questions.length;
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+
+            if (ratio === 1) {
+                title.innerText = '✨ 完美天才！';
+                desc.innerText = '呜哇！你一定是吃聪明豆长大的吧！(★ ω ★)';
+            } else if (ratio >= 0.6) {
+                title.innerText = '🌸 勉强及格 ~';
+                desc.innerText = '虽然有点笨笨的，但还是通过了呢。再接再厉喵！';
+            } else {
+                title.innerText = '🍼 真·小文盲';
+                desc.innerText = '没关系，可爱是不需要文凭的！回家吃奶糖吧 ( T_T)o';
+            }
+        }
+    </script>
+</body>
+</html>

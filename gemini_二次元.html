@@ -1,0 +1,715 @@
+<!-- 
+我将为你重新设计这个界面，它将具备以下“二次元”特征：
+
+日系明亮配色：使用天蓝色、樱花粉和浅绿色，模仿日系校园动画的清爽感。
+
+漫画边框与对话框：选项不再是圆润的按钮，而是带有黑色边框和轻微偏移阴影的“漫画框”风格（Neubrutalism 的变体）。
+
+看板娘/角色占位：预留一个可爱的角色互动区，让答题不再枯燥。
+
+像素风与渐变：背景加入点状纹理和波浪纹，增加视觉丰富度。
+
+以下是为您全新设计的二次元风格代码：
+
+为什么这个设计很“二次元”？
+Neubrutalism（新野兽主义）+ 漫画风：使用了大胆的厚重黑色阴影（Box-shadow: 12px 12px 0px #1e293b）和粗边框。这种风格在现在的日系潮牌网页和 ACG 手游 UI（如《女神异闻录5》）中非常流行。
+
+字体与动效：标题使用了快乐体（ZCOOL KuaiLe），选项进场时有从右往左弹出的“漫画分镜”感。
+
+情绪化表达：
+
+按钮不仅是 A/B/C/D，点击后会有明显的颜色反馈。
+
+结果页的评价使用了“斯国一”、“及格哒哟”、“雅蠛蝶”等带有二次元属性的口癖，增加了代入感。
+
+波点背景：背景使用了像素级的波点（dots），这是漫画网点纸的经典元素。 
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学文凭能有多文盲 - ACG Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap');
+
+        :root {
+            --anime-blue: #7dd3fc;
+            --anime-pink: #fbcfe8;
+            --anime-yellow: #fde047;
+            --border-ink: #1e293b;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #fefce8;
+            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        h1, .subject-name {
+            font-family: 'ZCOOL KuaiLe', cursive;
+        }
+
+        /* 漫画风格卡片 */
+        .manga-card {
+            background: white;
+            border: 4px solid var(--border-ink);
+            box-shadow: 12px 12px 0px var(--border-ink);
+            border-radius: 4px;
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 标题气泡 */
+        .title-bubble {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            background: var(--anime-yellow);
+            border: 3px solid var(--border-ink);
+            padding: 8px 24px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 20;
+            box-shadow: 4px 4px 0px var(--border-ink);
+        }
+
+        /* 二次元选项按钮 */
+        .manga-option {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.2rem;
+            background: white;
+            border: 3px solid var(--border-ink);
+            box-shadow: 6px 6px 0px var(--border-ink);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .manga-option:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0px var(--anime-blue);
+            background: #f0f9ff;
+        }
+
+        .manga-option:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--border-ink);
+        }
+
+        .manga-option.correct {
+            background: #bbf7d0;
+            border-color: #166534;
+        }
+
+        .manga-option.wrong {
+            background: #fecaca;
+            border-color: #991b1b;
+        }
+
+        .manga-index {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: var(--border-ink);
+            border-right: 2px dashed #cbd5e1;
+            padding-right: 1rem;
+        }
+
+        /* 学科图标选择器 */
+        .subject-btn {
+            background: white;
+            border: 3px solid var(--border-ink);
+            box-shadow: 4px 4px 0px var(--border-ink);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .subject-btn:hover {
+            transform: scale(1.05) rotate(2deg);
+            background: var(--anime-pink);
+        }
+
+        /* 进度条：波浪风格 */
+        .wave-progress {
+            height: 12px;
+            background: #e2e8f0;
+            border: 2px solid var(--border-ink);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .wave-fill {
+            height: 100%;
+            background: var(--anime-blue);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* 装饰元素 */
+        .decor-star {
+            position: absolute;
+            color: var(--anime-yellow);
+            font-size: 2rem;
+            pointer-events: none;
+        }
+
+        .hidden { display: none; }
+
+        /* 角色互动区 */
+        .char-box {
+            position: absolute;
+            bottom: -80px;
+            right: -60px;
+            width: 150px;
+            height: 150px;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 装饰用的星星 -->
+    <div class="decor-star" style="top: 10%; left: 10%;">✦</div>
+    <div class="decor-star" style="top: 20%; right: 15%;">✧</div>
+    <div class="decor-star" style="bottom: 15%; left: 15%;">✦</div>
+
+    <div id="game-app" class="manga-card animate__animated animate__zoomIn">
+        
+        <!-- 首页：学科看板 -->
+        <div id="home-screen">
+            <div class="title-bubble text-xl">大学文凭挑战赛!</div>
+            <h2 class="text-3xl font-black text-slate-800 mb-6 mt-4 text-center">文盲程度检测.exe</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="subject-btn" onclick="startQuiz('chinese', '#7dd3fc')">
+                    <div class="text-3xl mb-1">🖋️</div>
+                    <div class="subject-name font-bold">国文</div>
+                </div>
+                <div class="subject-btn" onclick="startQuiz('math', '#fbbf24')">
+                    <div class="text-3xl mb-1">🔢</div>
+                    <div class="subject-name font-bold">数理</div>
+                </div>
+                <div class="subject-btn" onclick="startQuiz('english', '#4ade80')">
+                    <div class="text-3xl mb-1">🗣️</div>
+                    <div class="subject-name font-bold">外语</div>
+                </div>
+                <div class="subject-btn" onclick="startQuiz('science', '#f472b6')">
+                    <div class="text-3xl mb-1">🧪</div>
+                    <div class="subject-name font-bold">科学</div>
+                </div>
+            </div>
+            <p class="text-center text-sm text-slate-400 font-bold">—— 赌上大学生的尊严！ ——</p>
+        </div>
+
+        <!-- 答题页 -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-end mb-2">
+                <span id="subject-tag" class="bg-black text-white px-3 py-1 text-xs font-bold italic">CHINESE</span>
+                <span class="font-black text-slate-800" id="progress-text">01/05</span>
+            </div>
+            <div class="wave-progress">
+                <div id="progress-fill" class="wave-fill"></div>
+            </div>
+
+            <div class="mb-8 min-h-[80px]">
+                <h3 id="question-text" class="text-xl font-black text-slate-800 leading-relaxed italic">
+                    问题加载中...
+                </h3>
+            </div>
+
+            <div id="options-list">
+                <!-- 动态填充选项 -->
+            </div>
+        </div>
+
+        <!-- 结果页 -->
+        <div id="result-screen" class="hidden text-center">
+            <div class="title-bubble text-xl" id="result-badge">鉴定结果</div>
+            <div class="text-7xl mb-6 mt-4" id="result-img">🍭</div>
+            <h2 class="text-4xl font-black mb-2" id="result-title">及格哒哟！</h2>
+            <p id="result-desc" class="text-slate-600 font-medium mb-8 leading-relaxed">虽然是个笨蛋，但还是勉强拿到了毕业证呢...</p>
+            
+            <button onclick="location.reload()" class="manga-option justify-center bg-yellow-400 hover:bg-yellow-300">
+                <span class="font-black">返回大厅</span>
+            </button>
+        </div>
+
+        <!-- 角色占位 -->
+        <div class="char-box">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#fbcfe8" stroke="#1e293b" stroke-width="3"/>
+                <circle cx="35" cy="40" r="5" fill="#1e293b"/>
+                <circle cx="65" cy="40" r="5" fill="#1e293b"/>
+                <path d="M 30 70 Q 50 85 70 70" stroke="#1e293b" stroke-width="3" fill="none" />
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            chinese: [
+                { q: "《滕王阁序》的作者是哪位大大？", a: ["王勃", "韩愈", "柳宗元", "欧阳修"], correct: 0 },
+                { q: "“身无彩凤双飞翼”的下半句是？", a: ["心有灵犀一点通", "此情可待成追忆", "只是当时已惘然", "谁知盘中餐"], correct: 0 },
+                { q: "下列哪个词语木有错别字？", a: ["针贬时弊", "甘拜下风", "一筹莫展", "按步就班"], correct: 2 }
+            ],
+            math: [
+                { q: "直角三角形中：a² + b² = ?", a: ["c", "c²", "2c", "√c"], correct: 1 },
+                { q: "1公顷 = ? 平方米", a: ["100", "1,000", "10,000", "1,000,000"], correct: 2 }
+            ]
+            // ... 可扩展其他学科
+        };
+
+        let questions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        function startQuiz(sub, color) {
+            questions = quizData[sub] || quizData['chinese'];
+            currentIdx = 0;
+            score = 0;
+            
+            document.getElementById('subject-tag').innerText = sub.toUpperCase();
+            document.getElementById('subject-tag').style.background = color;
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress-text').innerText = `${String(currentIdx+1).padStart(2,'0')}/${String(questions.length).padStart(2,'0')}`;
+            document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.a.forEach((txt, i) => {
+                const btn = document.createElement('div');
+                btn.className = 'manga-option animate__animated animate__fadeInRight';
+                btn.style.animationDelay = `${i * 0.05}s`;
+                btn.innerHTML = `<span class="manga-index">${labels[i]}</span><span class="font-bold">${txt}</span>`;
+                btn.onclick = () => handleAnswer(i, btn);
+                list.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(idx, el) {
+            const correct = questions[currentIdx].correct;
+            const options = document.querySelectorAll('.manga-option');
+            
+            // 禁用所有点击
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+
+            if (idx === correct) {
+                el.classList.add('correct');
+                score++;
+            } else {
+                el.classList.add('wrong');
+                options[correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentIdx++;
+                if (currentIdx < questions.length) {
+                    renderQuestion();
+                } else {
+                    showFinal();
+                }
+            }, 800);
+        }
+
+        function showFinal() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const ratio = score / questions.length;
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const img = document.getElementById('result-img');
+
+            if (ratio === 1) {
+                img.innerText = '👑';
+                title.innerText = '斯国一！';
+                desc.innerText = '你居然真的拥有大学生的智慧？不可思议！';
+            } else if (ratio >= 0.6) {
+                img.innerText = '✨';
+                title.innerText = '及格哒哟！';
+                desc.innerText = '虽然是个笨蛋，但还是勉强守住了尊严。';
+            } else {
+                img.innerText = '😱';
+                title.innerText = '雅蠛蝶！';
+                desc.innerText = '这种水平...你的毕业证是火车站买的吗？';
+            }
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学文凭能有多文盲 - ACG Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap');
+
+        :root {
+            --anime-blue: #7dd3fc;
+            --anime-pink: #fbcfe8;
+            --anime-yellow: #fde047;
+            --border-ink: #1e293b;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #fefce8;
+            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        h1, .subject-name {
+            font-family: 'ZCOOL KuaiLe', cursive;
+        }
+
+        /* 漫画风格卡片 */
+        .manga-card {
+            background: white;
+            border: 4px solid var(--border-ink);
+            box-shadow: 12px 12px 0px var(--border-ink);
+            border-radius: 4px;
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 标题气泡 */
+        .title-bubble {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            background: var(--anime-yellow);
+            border: 3px solid var(--border-ink);
+            padding: 8px 24px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 20;
+            box-shadow: 4px 4px 0px var(--border-ink);
+        }
+
+        /* 二次元选项按钮 */
+        .manga-option {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.2rem;
+            background: white;
+            border: 3px solid var(--border-ink);
+            box-shadow: 6px 6px 0px var(--border-ink);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .manga-option:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0px var(--anime-blue);
+            background: #f0f9ff;
+        }
+
+        .manga-option:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--border-ink);
+        }
+
+        .manga-option.correct {
+            background: #bbf7d0;
+            border-color: #166534;
+        }
+
+        .manga-option.wrong {
+            background: #fecaca;
+            border-color: #991b1b;
+        }
+
+        .manga-index {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: var(--border-ink);
+            border-right: 2px dashed #cbd5e1;
+            padding-right: 1rem;
+        }
+
+        /* 学科图标选择器 */
+        .subject-btn {
+            background: white;
+            border: 3px solid var(--border-ink);
+            box-shadow: 4px 4px 0px var(--border-ink);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .subject-btn:hover {
+            transform: scale(1.05) rotate(2deg);
+            background: var(--anime-pink);
+        }
+
+        /* 进度条：波浪风格 */
+        .wave-progress {
+            height: 12px;
+            background: #e2e8f0;
+            border: 2px solid var(--border-ink);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .wave-fill {
+            height: 100%;
+            background: var(--anime-blue);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* 装饰元素 */
+        .decor-star {
+            position: absolute;
+            color: var(--anime-yellow);
+            font-size: 2rem;
+            pointer-events: none;
+        }
+
+        .hidden { display: none; }
+
+        /* 角色互动区 */
+        .char-box {
+            position: absolute;
+            bottom: -80px;
+            right: -60px;
+            width: 150px;
+            height: 150px;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 装饰用的星星 -->
+    <div class="decor-star" style="top: 10%; left: 10%;">✦</div>
+    <div class="decor-star" style="top: 20%; right: 15%;">✧</div>
+    <div class="decor-star" style="bottom: 15%; left: 15%;">✦</div>
+
+    <div id="game-app" class="manga-card animate__animated animate__zoomIn">
+        
+        <!-- 首页：学科看板 -->
+        <div id="home-screen">
+            <div class="title-bubble text-xl">大学文凭挑战赛!</div>
+            <h2 class="text-3xl font-black text-slate-800 mb-6 mt-4 text-center">文盲程度检测.exe</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="subject-btn" onclick="startQuiz('chinese', '#7dd3fc')">
+                    <div class="text-3xl mb-1">🖋️</div>
+                    <div class="subject-name font-bold">国文</div>
+                </div>
+                <div class="subject-btn" onclick="startQuiz('math', '#fbbf24')">
+                    <div class="text-3xl mb-1">🔢</div>
+                    <div class="subject-name font-bold">数理</div>
+                </div>
+                <div class="subject-btn" onclick="startQuiz('english', '#4ade80')">
+                    <div class="text-3xl mb-1">🗣️</div>
+                    <div class="subject-name font-bold">外语</div>
+                </div>
+                <div class="subject-btn" onclick="startQuiz('science', '#f472b6')">
+                    <div class="text-3xl mb-1">🧪</div>
+                    <div class="subject-name font-bold">科学</div>
+                </div>
+            </div>
+            <p class="text-center text-sm text-slate-400 font-bold">—— 赌上大学生的尊严！ ——</p>
+        </div>
+
+        <!-- 答题页 -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-end mb-2">
+                <span id="subject-tag" class="bg-black text-white px-3 py-1 text-xs font-bold italic">CHINESE</span>
+                <span class="font-black text-slate-800" id="progress-text">01/05</span>
+            </div>
+            <div class="wave-progress">
+                <div id="progress-fill" class="wave-fill"></div>
+            </div>
+
+            <div class="mb-8 min-h-[80px]">
+                <h3 id="question-text" class="text-xl font-black text-slate-800 leading-relaxed italic">
+                    问题加载中...
+                </h3>
+            </div>
+
+            <div id="options-list">
+                <!-- 动态填充选项 -->
+            </div>
+        </div>
+
+        <!-- 结果页 -->
+        <div id="result-screen" class="hidden text-center">
+            <div class="title-bubble text-xl" id="result-badge">鉴定结果</div>
+            <div class="text-7xl mb-6 mt-4" id="result-img">🍭</div>
+            <h2 class="text-4xl font-black mb-2" id="result-title">及格哒哟！</h2>
+            <p id="result-desc" class="text-slate-600 font-medium mb-8 leading-relaxed">虽然是个笨蛋，但还是勉强拿到了毕业证呢...</p>
+            
+            <button onclick="location.reload()" class="manga-option justify-center bg-yellow-400 hover:bg-yellow-300">
+                <span class="font-black">返回大厅</span>
+            </button>
+        </div>
+
+        <!-- 角色占位 -->
+        <div class="char-box">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#fbcfe8" stroke="#1e293b" stroke-width="3"/>
+                <circle cx="35" cy="40" r="5" fill="#1e293b"/>
+                <circle cx="65" cy="40" r="5" fill="#1e293b"/>
+                <path d="M 30 70 Q 50 85 70 70" stroke="#1e293b" stroke-width="3" fill="none" />
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            chinese: [
+                { q: "《滕王阁序》的作者是哪位大大？", a: ["王勃", "韩愈", "柳宗元", "欧阳修"], correct: 0 },
+                { q: "“身无彩凤双飞翼”的下半句是？", a: ["心有灵犀一点通", "此情可待成追忆", "只是当时已惘然", "谁知盘中餐"], correct: 0 },
+                { q: "下列哪个词语木有错别字？", a: ["针贬时弊", "甘拜下风", "一筹莫展", "按步就班"], correct: 2 }
+            ],
+            math: [
+                { q: "直角三角形中：a² + b² = ?", a: ["c", "c²", "2c", "√c"], correct: 1 },
+                { q: "1公顷 = ? 平方米", a: ["100", "1,000", "10,000", "1,000,000"], correct: 2 }
+            ]
+            // ... 可扩展其他学科
+        };
+
+        let questions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        function startQuiz(sub, color) {
+            questions = quizData[sub] || quizData['chinese'];
+            currentIdx = 0;
+            score = 0;
+            
+            document.getElementById('subject-tag').innerText = sub.toUpperCase();
+            document.getElementById('subject-tag').style.background = color;
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress-text').innerText = `${String(currentIdx+1).padStart(2,'0')}/${String(questions.length).padStart(2,'0')}`;
+            document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.a.forEach((txt, i) => {
+                const btn = document.createElement('div');
+                btn.className = 'manga-option animate__animated animate__fadeInRight';
+                btn.style.animationDelay = `${i * 0.05}s`;
+                btn.innerHTML = `<span class="manga-index">${labels[i]}</span><span class="font-bold">${txt}</span>`;
+                btn.onclick = () => handleAnswer(i, btn);
+                list.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(idx, el) {
+            const correct = questions[currentIdx].correct;
+            const options = document.querySelectorAll('.manga-option');
+            
+            // 禁用所有点击
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+
+            if (idx === correct) {
+                el.classList.add('correct');
+                score++;
+            } else {
+                el.classList.add('wrong');
+                options[correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentIdx++;
+                if (currentIdx < questions.length) {
+                    renderQuestion();
+                } else {
+                    showFinal();
+                }
+            }, 800);
+        }
+
+        function showFinal() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const ratio = score / questions.length;
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const img = document.getElementById('result-img');
+
+            if (ratio === 1) {
+                img.innerText = '👑';
+                title.innerText = '斯国一！';
+                desc.innerText = '你居然真的拥有大学生的智慧？不可思议！';
+            } else if (ratio >= 0.6) {
+                img.innerText = '✨';
+                title.innerText = '及格哒哟！';
+                desc.innerText = '虽然是个笨蛋，但还是勉强守住了尊严。';
+            } else {
+                img.innerText = '😱';
+                title.innerText = '雅蠛蝶！';
+                desc.innerText = '这种水平...你的毕业证是火车站买的吗？';
+            }
+        }
+    </script>
+</body>
+</html>
