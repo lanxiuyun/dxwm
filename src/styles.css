@@ -1,9 +1,6 @@
 :root {
   font-family: "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif;
   color: #fff7eb;
-  background:
-    radial-gradient(circle at top, rgba(255, 153, 85, 0.18), transparent 30%),
-    linear-gradient(180deg, #17110f 0%, #0e141c 100%);
   --bg: #120f10;
   --panel: rgba(27, 21, 19, 0.92);
   --panel-soft: rgba(255, 255, 255, 0.05);
@@ -15,19 +12,9 @@
   --bad: #ff7382;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  min-height: 100%;
-  margin: 0;
-}
-
 body {
   min-height: 100vh;
+  margin: 0;
 }
 
 button {
@@ -37,6 +24,11 @@ button {
 .app {
   min-height: 100vh;
   padding: 16px;
+  background-color: #120f10;
+  background-image:
+    radial-gradient(circle at top, rgba(255, 153, 85, 0.18), transparent 30%),
+    linear-gradient(180deg, #17110f 0%, #0e141c 100%);
+  background-attachment: fixed;
 }
 
 .screen {
@@ -137,6 +129,7 @@ button {
 .subject-name {
   font-size: 1.1rem;
   font-weight: 700;
+  color: #fff7eb;
 }
 
 .top-row,
@@ -281,6 +274,321 @@ button {
   color: var(--bad);
 }
 
+[data-theme='glass'] {
+  --bg: #e0e7ff;
+  --panel: rgba(255, 255, 255, 0.75);
+  --panel-soft: rgba(255, 255, 255, 0.5);
+  --stroke: rgba(255, 255, 255, 0.6);
+  --text-soft: rgba(255, 255, 255, 0.65);
+  --accent: #6366f1;
+  --accent-strong: #818cf8;
+  --good: #34d399;
+  --bad: #f87171;
+  --text: #1e1b4b;
+  --text-soft: #4338ca;
+}
+
+[data-theme='glass'] .app {
+  background-color: #e0e7ff;
+  background-image: linear-gradient(135deg, #e0e7ff 0%, #f5f3ff 100%);
+}
+
+[data-theme='glass'] .panel {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.12);
+}
+
+[data-theme='glass'] .mini-label {
+  color: #6366f1;
+}
+
+[data-theme='glass'] .home-panel h1,
+[data-theme='glass'] .result-panel h2,
+[data-theme='glass'] .question-title {
+  color: #1e1b4b;
+}
+
+[data-theme='glass'] .lead {
+  color: #4338ca;
+}
+
+[data-theme='glass'] .meta-pill,
+[data-theme='glass'] .subject-chip {
+  background: rgba(255, 255, 255, 0.6);
+  color: #4338ca;
+}
+
+[data-theme='glass'] .subject-mark,
+[data-theme='glass'] .option-key {
+  background: linear-gradient(135deg, #c7d2fe, #6366f1);
+  color: #fff;
+}
+
+[data-theme='glass'] .score-row {
+  color: #4338ca;
+}
+
+[data-theme='glass'] .ghost-button {
+  color: #4338ca;
+}
+
+[data-theme='glass'] .primary-button {
+  background: linear-gradient(90deg, #c7d2fe, #6366f1 70%, #818cf8);
+}
+
+[data-theme='glass'] .subject-button {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='glass'] .subject-name {
+  color: #1e1b4b;
+}
+
+[data-theme='glass'] .option-button {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='glass'] .review-item {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='glass'] .hint-text,
+[data-theme='glass'] .review-item p {
+  color: #4338ca;
+}
+
+[data-theme='glass'] .ok {
+  color: var(--good);
+}
+
+[data-theme='glass'] .bad {
+  color: var(--bad);
+}
+
+[data-theme='kawaii'] {
+  --bg: #fff5f7;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-soft: rgba(255, 255, 255, 0.7);
+  --stroke: rgba(255, 182, 193, 0.3);
+  --text-soft: rgba(93, 74, 102, 0.7);
+  --accent: #ffb7c5;
+  --accent-strong: #ff91ab;
+  --good: #a0e7a0;
+  --bad: #ff91ab;
+  --text: #5d4a66;
+}
+
+[data-theme='kawaii'] .app {
+  background-color: #fff5f7;
+  background-image:
+    radial-gradient(#ffb7c5 1.5px, transparent 1.5px),
+    radial-gradient(#a0e7ff 1.5px, transparent 1.5px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+[data-theme='kawaii'] .mini-label {
+  color: #ff91ab;
+}
+
+[data-theme='kawaii'] .home-panel h1,
+[data-theme='kawaii'] .result-panel h2,
+[data-theme='kawaii'] .question-title {
+  color: #5d4a66;
+}
+
+[data-theme='kawaii'] .lead {
+  color: #c48b9f;
+}
+
+[data-theme='kawaii'] .meta-pill,
+[data-theme='kawaii'] .subject-chip {
+  background: rgba(255, 182, 193, 0.3);
+  color: #ff91ab;
+}
+
+[data-theme='kawaii'] .subject-mark,
+[data-theme='kawaii'] .option-key {
+  background: linear-gradient(135deg, #fff3a0, #ffb7c5);
+  color: #5d4a66;
+}
+
+[data-theme='kawaii'] .score-row {
+  color: #c48b9f;
+}
+
+[data-theme='kawaii'] .ghost-button {
+  color: #c48b9f;
+}
+
+[data-theme='kawaii'] .primary-button {
+  background: linear-gradient(90deg, #fff3a0, #ffb7c5 70%, #ff91ab);
+}
+
+[data-theme='kawaii'] .subject-button {
+  background: rgba(255, 243, 160, 0.2);
+  border-radius: 24px;
+}
+
+[data-theme='kawaii'] .subject-name {
+  color: #5d4a66;
+}
+
+[data-theme='kawaii'] .option-button {
+  background: rgba(255, 243, 160, 0.2);
+  border-radius: 22px;
+}
+
+[data-theme='kawaii'] .panel {
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme='kawaii'] .review-item {
+  background: rgba(255, 243, 160, 0.15);
+  border-radius: 20px;
+}
+
+[data-theme='kawaii'] .hint-text,
+[data-theme='kawaii'] .review-item p {
+  color: #c48b9f;
+}
+
+[data-theme='kawaii'] .option-button.is-correct {
+  border-color: rgba(160, 231, 160, 0.5);
+  background: rgba(160, 231, 160, 0.2);
+}
+
+[data-theme='kawaii'] .option-button.is-wrong {
+  border-color: rgba(255, 145, 171, 0.5);
+  background: rgba(255, 145, 171, 0.15);
+}
+
+[data-theme='kawaii'] .ok {
+  color: #62c496;
+}
+
+[data-theme='kawaii'] .bad {
+  color: #ff91ab;
+}
+
+[data-theme='anime'] {
+  --bg: #fefce8;
+  --panel: #fff;
+  --panel-soft: rgba(253, 245, 154, 0.3);
+  --stroke: #1e293b;
+  --text-soft: rgba(30, 41, 59, 0.7);
+  --accent: #7dd3fc;
+  --accent-strong: #fbcfe8;
+  --good: #86efac;
+  --bad: #fca5a5;
+  --text: #1e293b;
+}
+
+[data-theme='anime'] .app {
+  background-color: #fefce8;
+  background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+[data-theme='anime'] .mini-label {
+  color: #ec4899;
+}
+
+[data-theme='anime'] .home-panel h1,
+[data-theme='anime'] .result-panel h2,
+[data-theme='anime'] .question-title {
+  color: #1e293b;
+}
+
+[data-theme='anime'] .lead {
+  color: #475569;
+}
+
+[data-theme='anime'] .meta-pill,
+[data-theme='anime'] .subject-chip {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+[data-theme='anime'] .subject-mark,
+[data-theme='anime'] .option-key {
+  background: linear-gradient(135deg, #fde047, #7dd3fc);
+  color: #1e293b;
+}
+
+[data-theme='anime'] .score-row {
+  color: #475569;
+}
+
+[data-theme='anime'] .ghost-button {
+  color: #475569;
+}
+
+[data-theme='anime'] .primary-button {
+  background: linear-gradient(90deg, #fde047, #7dd3fc 70%, #fbcfe8);
+  border-radius: 12px;
+}
+
+[data-theme='anime'] .subject-button {
+  background: #fff;
+  border: 3px solid #1e293b;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 #1e293b;
+}
+
+[data-theme='anime'] .subject-name {
+  color: #1e293b;
+}
+
+[data-theme='anime'] .option-button {
+  background: #fff;
+  border: 3px solid #1e293b;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 #1e293b;
+}
+
+[data-theme='anime'] .panel {
+  border: 3px solid #1e293b;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 6px 6px 0 #1e293b;
+}
+
+[data-theme='anime'] .review-item {
+  background: #fef9c3;
+  border: 2px solid #1e293b;
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 #1e293b;
+}
+
+[data-theme='anime'] .hint-text,
+[data-theme='anime'] .review-item p {
+  color: #475569;
+}
+
+[data-theme='anime'] .option-button.is-correct {
+  border-color: #22c55e;
+  background: #dcfce7;
+  box-shadow: 4px 4px 0 #22c55e;
+}
+
+[data-theme='anime'] .option-button.is-wrong {
+  border-color: #ef4444;
+  background: #fee2e2;
+  box-shadow: 4px 4px 0 #ef4444;
+}
+
+[data-theme='anime'] .ok {
+  color: #22c55e;
+}
+
+[data-theme='anime'] .bad {
+  color: #ef4444;
+}
+
 @media (max-width: 420px) {
   .app {
     padding: 12px;
@@ -304,4 +612,90 @@ button {
   .score-row {
     font-size: 0.88rem;
   }
+}
+
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  transition: transform 0.15s ease;
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+}
+
+.theme-dot:nth-child(2) {
+  background: #ffb7c5;
+}
+
+.theme-dot:nth-child(3) {
+  background: #7dd3fc;
+}
+
+[data-theme='glass'] .theme-toggle {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+[data-theme='glass'] .theme-dot {
+  background: #6366f1;
+}
+
+[data-theme='glass'] .theme-dot:nth-child(2) {
+  background: #818cf8;
+}
+
+[data-theme='glass'] .theme-dot:nth-child(3) {
+  background: #c7d2fe;
+}
+
+[data-theme='kawaii'] .theme-toggle {
+  background: rgba(255, 183, 197, 0.4);
+}
+
+[data-theme='kawaii'] .theme-dot {
+  background: #ffb7c5;
+}
+
+[data-theme='kawaii'] .theme-dot:nth-child(2) {
+  background: #fff3a0;
+}
+
+[data-theme='kawaii'] .theme-dot:nth-child(3) {
+  background: #a0e7ff;
+}
+
+[data-theme='anime'] .theme-toggle {
+  background: #fde047;
+  border: 2px solid #1e293b;
+  box-shadow: 2px 2px 0 #1e293b;
+}
+
+[data-theme='anime'] .theme-dot {
+  background: #7dd3fc;
+}
+
+[data-theme='anime'] .theme-dot:nth-child(2) {
+  background: #fbcfe8;
+}
+
+[data-theme='anime'] .theme-dot:nth-child(3) {
+  background: #fde047;
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { QUESTIONS_BY_SUBJECT, SUBJECTS } from './data/questions'
 
 const ROUND_SIZE = 5
+const THEMES = ['default', 'glass', 'kawaii', 'anime']
 
 function shuffle(items) {
   const result = [...items]
@@ -37,6 +38,24 @@ export default function App() {
   const [locked, setLocked] = useState(false)
   const [score, setScore] = useState(0)
   const [history, setHistory] = useState([])
+
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('dxwm-theme') || 'default'
+    }
+    return 'default'
+  })
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme)
+    localStorage.setItem('dxwm-theme', theme)
+  }, [theme])
+
+  const cycleTheme = () => {
+    const idx = THEMES.indexOf(theme)
+    const next = THEMES[(idx + 1) % THEMES.length]
+    setTheme(next)
+  }
 
   const currentQuestion = questions[currentIndex]
   const currentSubject = SUBJECTS.find((item) => item.key === selectedSubject)
@@ -244,6 +263,17 @@ export default function App() {
           </section>
         ) : null}
       </div>
+
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={cycleTheme}
+        aria-label="切换主题"
+      >
+        <span className="theme-dot" />
+        <span className="theme-dot" />
+        <span className="theme-dot" />
+      </button>
     </main>
   )
 }
