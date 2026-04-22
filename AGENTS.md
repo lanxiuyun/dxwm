@@ -33,9 +33,9 @@ Current content scope:
 
 - `index.html`: Vite entry
 - `src/main.jsx`: React bootstrap
-- `src/App.jsx`: page flow and gameplay state
+- `src/App.jsx`: shared gameplay flow, theme switching, theme copy, and theme backdrop structure
 - `src/data/questions.js`: local quiz bank by subject
-- `src/styles.css`: mobile-first UI styles
+- `src/styles.css`: mobile-first UI styles and full theme-specific skins for `glass` `kawaii` `anime`
 - `DEVELOPMENT_PLAN.md`: current project plan
 
 ## Product Requirements
@@ -70,6 +70,20 @@ Current content scope:
 - Prioritize mobile layout first, then scale up cleanly for desktop
 - Avoid large side panels, dense intro sections, or heavy explanatory blocks
 
+## Theme Guidance
+
+- The default UI style is `glass`, based on `gemini_新形态玻璃拟态.html`
+- The project now includes three switchable themes: `glass` `kawaii` `anime`
+- The theme system must stay extensible because these themes are derived from reference HTML files and need further polish without changing the gameplay flow
+- New UI work should preserve a shared gameplay structure and swap visual language through theme-level styles instead of rewriting page flow for each theme
+- `src/styles.css` should remain the main place for theme variables and theme-specific visual treatment
+- `src/App.jsx` should keep gameplay state and screen structure theme-agnostic where practical
+- When adjusting the default glass style, keep the core traits from the reference: soft gradient background, floating ambient blobs, translucent panels, rounded cards, and compact single-screen layout
+- `kawaii` should keep its creamy card, candy palette, soft rounded buttons, and floating cute decorations
+- `anime` should keep its manga-card silhouette, thick ink borders, hard offset shadows, and decorative character/star elements
+- Theme fidelity matters more than forcing all themes into the same visual component treatment
+- Theme additions must not break mobile-first layout or the fast quiz rhythm
+
 ## Engineering Guidance
 
 - Prefer small pure helper functions over abstraction-heavy patterns
@@ -85,8 +99,11 @@ Before handoff, run:
 pnpm build
 ```
 
+If `pnpm` is unavailable in the local PATH or blocked by the current environment, document the limitation clearly and use an equivalent local build command only as a fallback verification step.
+
 Manually verify:
 - subject selection
+- theme switching across `glass` `kawaii` `anime`
 - mobile layout
 - answer locking
 - 100ms auto-advance behavior
