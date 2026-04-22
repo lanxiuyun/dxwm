@@ -269,15 +269,23 @@ export default function App() {
     setHistory([])
   }
 
-  const cycleTheme = () => {
-    const currentThemeIndex = THEMES.indexOf(theme)
-    const nextTheme = THEMES[(currentThemeIndex + 1) % THEMES.length]
-    setTheme(nextTheme)
-  }
-
   return (
     <div className="app-shell">
       <ThemeBackdrop theme={theme} />
+
+      <div className="floating-theme-capsule" role="tablist" aria-label="主题选择">
+        {THEMES.map((item) => (
+          <button
+            key={item}
+            type="button"
+            className={`theme-chip ${item === theme ? 'is-active' : ''}`}
+            onClick={() => setTheme(item)}
+            aria-pressed={item === theme}
+          >
+            {THEME_COPY[item].switchLabel}
+          </button>
+        ))}
+      </div>
 
       <main className="app">
         <section className="screen">
@@ -295,27 +303,7 @@ export default function App() {
           >
             {phase === 'home' ? (
               <>
-                <div className="theme-switcher" role="tablist" aria-label="主题选择">
-                  {THEMES.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      className={`theme-chip ${item === theme ? 'is-active' : ''}`}
-                      onClick={() => setTheme(item)}
-                    >
-                      {THEME_COPY[item].switchLabel}
-                    </button>
-                  ))}
-                </div>
-
                 {theme === 'anime' ? <div className="title-bubble">大学文凭挑战赛!</div> : null}
-
-                <div className="panel-top">
-                  <p className="eyebrow">{copy.switchLabel}</p>
-                  <button type="button" className="theme-toggle" onClick={cycleTheme}>
-                    切换风格
-                  </button>
-                </div>
 
                 {theme === 'kawaii' ? <div className="home-emoji">🍭</div> : null}
 
@@ -410,13 +398,6 @@ export default function App() {
             {phase === 'result' && summary ? (
               <>
                 {theme === 'anime' ? <div className="title-bubble">鉴定结果</div> : null}
-
-                <div className="panel-top">
-                  <p className="eyebrow">{currentSubjectThemeMeta?.short || currentSubject?.name}</p>
-                  <button type="button" className="theme-toggle" onClick={cycleTheme}>
-                    切换风格
-                  </button>
-                </div>
 
                 <div className="result-emoji">{summary.emoji}</div>
                 <h2>{summary.judgement}</h2>

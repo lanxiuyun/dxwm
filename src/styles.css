@@ -53,6 +53,19 @@ button {
   pointer-events: none;
 }
 
+.floating-theme-capsule {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  transform: translateX(calc(240px - 100%));
+}
+
 .app {
   position: relative;
   z-index: 1;
@@ -72,26 +85,18 @@ button {
   width: 100%;
 }
 
-.panel-top,
 .quiz-head,
 .score-row,
 .review-head,
 .result-actions,
-.result-stats,
-.theme-switcher {
+.result-stats {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.theme-switcher {
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
-
 .theme-chip,
-.theme-toggle,
 .primary-button,
 .ghost-button,
 .subject-card,
@@ -101,7 +106,6 @@ button {
 }
 
 .theme-chip,
-.theme-toggle,
 .ghost-button {
   transition:
     transform 0.2s ease,
@@ -251,8 +255,11 @@ button {
   padding: 2.5rem;
 }
 
-[data-theme='glass'] .theme-switcher {
-  margin-bottom: 1.25rem;
+[data-theme='glass'] .floating-theme-capsule {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px);
 }
 
 [data-theme='glass'] .theme-chip {
@@ -269,24 +276,11 @@ button {
   font-weight: 700;
 }
 
-[data-theme='glass'] .panel-top {
-  margin-bottom: 0.75rem;
-}
-
 [data-theme='glass'] .eyebrow {
   color: var(--accent);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-}
-
-[data-theme='glass'] .theme-toggle {
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  color: var(--accent);
-  backdrop-filter: blur(12px);
 }
 
 [data-theme='glass'] .home-panel h1,
@@ -582,8 +576,10 @@ button {
   padding: 2.5rem;
 }
 
-[data-theme='kawaii'] .theme-switcher {
-  margin-bottom: 1.2rem;
+[data-theme='kawaii'] .floating-theme-capsule {
+  background: rgba(255, 255, 255, 0.94);
+  border: 3px solid #fff;
+  box-shadow: 0 8px 0 rgba(255, 183, 197, 0.45);
 }
 
 [data-theme='kawaii'] .theme-chip {
@@ -602,24 +598,10 @@ button {
   box-shadow: 0 5px 0 #ffb7c5;
 }
 
-[data-theme='kawaii'] .panel-top {
-  margin-bottom: 0.5rem;
-}
-
 [data-theme='kawaii'] .eyebrow {
   color: #ff8aa0;
   font-family: 'Ma Shan Zheng', 'Noto Sans SC', sans-serif;
   font-size: 1rem;
-}
-
-[data-theme='kawaii'] .theme-toggle {
-  min-height: 42px;
-  padding: 0 16px;
-  border-radius: 999px;
-  background: #fff;
-  color: #ff8aa0;
-  border: 3px solid #ffb7c5;
-  box-shadow: 0 6px 0 #ffb7c5;
 }
 
 [data-theme='kawaii'] .home-emoji {
@@ -924,8 +906,10 @@ button {
   padding: 2rem;
 }
 
-[data-theme='anime'] .theme-switcher {
-  margin-bottom: 1rem;
+[data-theme='anime'] .floating-theme-capsule {
+  background: white;
+  border: 3px solid #1e293b;
+  box-shadow: 6px 6px 0 #1e293b;
 }
 
 [data-theme='anime'] .theme-chip {
@@ -957,26 +941,12 @@ button {
   white-space: nowrap;
 }
 
-[data-theme='anime'] .panel-top {
-  margin-bottom: 0.75rem;
-}
-
 [data-theme='anime'] .eyebrow {
   color: #1e293b;
   font-size: 0.8rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-[data-theme='anime'] .theme-toggle {
-  min-height: 42px;
-  padding: 0 14px;
-  border: 3px solid #1e293b;
-  background: white;
-  color: #1e293b;
-  box-shadow: 4px 4px 0 #1e293b;
-  font-weight: 700;
 }
 
 [data-theme='anime'] .home-panel h1,
@@ -1261,6 +1231,21 @@ button {
 @media (max-width: 520px) {
   .app {
     padding: 18px 12px;
+  }
+
+  .floating-theme-capsule {
+    left: auto;
+    right: 12px;
+    bottom: 12px;
+    gap: 6px;
+    padding: 6px;
+    transform: none;
+  }
+
+  .theme-chip {
+    min-width: 0;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .screen {
