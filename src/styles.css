@@ -321,6 +321,7 @@ button {
   border: 2px solid transparent;
   color: var(--text-main);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
 }
 
 [data-theme='glass'] .subject-card:hover {
@@ -417,6 +418,7 @@ button {
   background: white;
   border: 2px solid transparent;
   text-align: left;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme='glass'] .option-button:hover:not(:disabled) {
@@ -656,6 +658,7 @@ button {
   box-shadow: 0 6px 0 var(--subject-accent);
   color: var(--text-main);
   text-align: center;
+  transition: 0.3s;
 }
 
 [data-theme='kawaii'] .subject-card:hover {
@@ -747,6 +750,7 @@ button {
   box-shadow: 0 6px 0 #ffb7c5;
   color: var(--text-main);
   text-align: left;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 [data-theme='kawaii'] .option-button:hover:not(:disabled) {
@@ -852,6 +856,7 @@ button {
   box-shadow: 0 6px 0 #ff6d8d;
   color: white;
   font-weight: 900;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 [data-theme='kawaii'] .ghost-button {
@@ -864,6 +869,28 @@ button {
   box-shadow: 0 6px 0 #a0e7ff;
   color: #5d4a66;
   font-weight: 900;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+[data-theme='kawaii'] .primary-button:hover,
+[data-theme='kawaii'] .ghost-button:hover {
+  transform: translateY(-4px);
+}
+
+[data-theme='kawaii'] .primary-button:hover {
+  background: #ffb7c5;
+  border-color: #ffd845;
+  box-shadow: 0 10px 0 #ffd845;
+}
+
+[data-theme='kawaii'] .ghost-button:hover {
+  background: #f0faff;
+}
+
+[data-theme='kawaii'] .primary-button:active,
+[data-theme='kawaii'] .ghost-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 transparent;
 }
 
 [data-theme='kawaii'] .review-list {
@@ -989,6 +1016,7 @@ button {
   box-shadow: 4px 4px 0 #1e293b;
   text-align: center;
   color: var(--text-main);
+  transition: 0.2s;
 }
 
 [data-theme='anime'] .subject-card:hover {
@@ -1079,6 +1107,7 @@ button {
   box-shadow: 6px 6px 0 #1e293b;
   color: var(--text-main);
   text-align: left;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 [data-theme='anime'] .option-button:hover:not(:disabled) {
@@ -1174,6 +1203,7 @@ button {
   border: 3px solid #1e293b;
   box-shadow: 4px 4px 0 #1e293b;
   font-weight: 900;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 [data-theme='anime'] .primary-button {
@@ -1186,6 +1216,26 @@ button {
   flex: 1 1 140px;
   background: white;
   color: #1e293b;
+}
+
+[data-theme='anime'] .primary-button:hover,
+[data-theme='anime'] .ghost-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 10px 10px 0 #7dd3fc;
+}
+
+[data-theme='anime'] .primary-button:hover {
+  background: #fde68a;
+}
+
+[data-theme='anime'] .ghost-button:hover {
+  background: #f0f9ff;
+}
+
+[data-theme='anime'] .primary-button:active,
+[data-theme='anime'] .ghost-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #1e293b;
 }
 
 [data-theme='anime'] .review-list {
