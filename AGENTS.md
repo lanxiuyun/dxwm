@@ -65,6 +65,7 @@ Current content scope:
 ## UX Guidance
 
 - Treat the app like a lightweight mini-game, not a content-heavy website
+- Every UI change must be evaluated for both desktop and mobile during development, not only at handoff
 - Keep the gameplay screen minimal: progress, score, question, options
 - Remove nonessential helper text during play if it slows the rhythm
 - Prioritize mobile layout first, then scale up cleanly for desktop
