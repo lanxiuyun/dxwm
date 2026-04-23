@@ -273,18 +273,25 @@ export default function App() {
     <div className="app-shell">
       <ThemeBackdrop theme={theme} />
 
-      <div className="floating-theme-capsule" role="tablist" aria-label="主题选择">
-        {THEMES.map((item) => (
-          <button
-            key={item}
-            type="button"
-            className={`theme-chip ${item === theme ? 'is-active' : ''}`}
-            onClick={() => setTheme(item)}
-            aria-pressed={item === theme}
-          >
-            {THEME_COPY[item].switchLabel}
-          </button>
-        ))}
+      <div className="floating-theme-dock">
+        <div
+          className={`floating-theme-capsule theme-pill-${theme}`}
+          role="tablist"
+          aria-label="主题选择"
+        >
+          <div className="theme-pill-slider" aria-hidden="true" />
+          {THEMES.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`theme-chip ${item === theme ? 'is-active' : ''}`}
+              onClick={() => setTheme(item)}
+              aria-pressed={item === theme}
+            >
+              {THEME_COPY[item].switchLabel}
+            </button>
+          ))}
+        </div>
       </div>
 
       <main className="app">
