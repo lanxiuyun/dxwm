@@ -120,6 +120,7 @@
 - `src/App.jsx` 已拆出主题配置、主题文案、主题学科图标和主题背景装饰容器
 - `src/styles.css` 已按 `data-theme` 分离三套主题皮肤
 - 题库、计分、自动跳题、结果页复盘仍然共用同一套 React 状态流
+- 默认 `glass` 首页已去掉“轻量、直接、快节奏”这条脚注文案，首页信息进一步收紧
 
 当前实现已经满足“可切换、可运行、结构正确”，但还没有完成逐像素级别的参考稿精修。
 
@@ -138,11 +139,10 @@
 本轮开发已完成构建验证，但存在环境限制：
 
 - 项目规则仍然要求优先使用 `pnpm build`
-- 当前环境中 `pnpm` 不在 PATH
-- `corepack pnpm build` 受网络限制无法拉取所需资源
-- 已使用本地已有依赖通过 `cmd /c npm run build` 完成一次构建验证
+- 当前 Codex shell 会话的 PATH 不包含 `pnpm`，但系统已安装 `C:\nvm4w\nodejs\pnpm.cmd`
+- 已通过系统绝对路径执行 `C:\nvm4w\nodejs\pnpm.cmd build` 完成一次构建验证
 
-后续在具备可用 `pnpm` 环境时，仍应补跑一次 `pnpm build`
+后续若 shell PATH 仍不稳定，优先继续使用系统 `pnpm` 绝对路径补跑验证；项目规则本身仍以 `pnpm build` 为准
 
 ## Theme Risks
 

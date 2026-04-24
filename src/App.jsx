@@ -11,7 +11,7 @@ const THEME_COPY = {
     switchLabel: '玻璃拟态',
     homeTitle: '大学文凭能有多文盲',
     homeSubtitle: '别划走，试试这些“基础题”...',
-    homeFootnote: '轻量、直接、快节奏',
+    homeFootnote: '',
     resultAction: '再洗白一次',
   },
   kawaii: {
@@ -343,7 +343,7 @@ export default function App() {
                 <h1>{copy.homeTitle}</h1>
                 <p className="lead">{copy.homeSubtitle}</p>
 
-                <p className="theme-note">{copy.homeFootnote}</p>
+                {copy.homeFootnote ? <p className="theme-note">{copy.homeFootnote}</p> : null}
 
                 <div className="subject-grid">
                   {SUBJECTS.map((subject) => {
