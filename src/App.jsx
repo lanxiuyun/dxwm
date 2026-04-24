@@ -3,6 +3,8 @@ import { QUESTIONS_BY_SUBJECT, SUBJECTS } from './data/questions'
 
 const ROUND_SIZE = 5
 const THEMES = ['glass', 'kawaii', 'anime']
+const ANIME_RESULT_LEFT_IMAGE = '/ChatGPT%20Image%20%E7%AD%94%E9%A2%98%E7%BB%93%E6%9E%9C%E5%B7%A6%E4%BE%A7.png'
+const ANIME_RESULT_RIGHT_IMAGE = '/ChatGPT%20Image%20%E7%AD%94%E9%A2%98%E7%BB%93%E6%9E%9C%E5%8F%B3%E4%BE%A7.png'
 
 const THEME_COPY = {
   glass: {
@@ -127,6 +129,29 @@ function getResultEmoji(score, total, theme) {
   return '🤡'
 }
 
+function getAnimeResultScene(score, total) {
+  const ratio = score / total
+
+  if (ratio === 1) {
+    return {
+      badge: '满分通关',
+      bubbles: ['这次是真的学霸！', '全都会诶？', '居然一题没丢！', '再来一次也不怕吧！'],
+    }
+  }
+
+  if (ratio >= 0.6) {
+    return {
+      badge: '勉强过线',
+      bubbles: ['还算撑住了！', '差一点就翻车…', '至少不像完全不会', '要不要再刷一次？'],
+    }
+  }
+
+  return {
+    badge: '急需补课',
+    bubbles: ['这都能错这么多？', '分数有点危险了…', '只有这点分…', '再试一次吧！'],
+  }
+}
+
 function ThemeBackdrop({ theme }) {
   if (theme === 'anime') {
     return (
@@ -221,6 +246,7 @@ export default function App() {
       emoji: getResultEmoji(score, questions.length, theme),
     }
   }, [phase, questions.length, score, theme])
+  const animeScene = phase === 'result' && summary ? getAnimeResultScene(score, summary.total) : null
 
   const startRound = (subjectKey) => {
     setSelectedSubject(subjectKey)
@@ -405,6 +431,62 @@ export default function App() {
             {phase === 'result' && summary ? (
               <>
                 {theme === 'anime' ? <div className="title-bubble">鉴定结果</div> : null}
+
+                {theme === 'anime' && animeScene ? (
+                  <div className="anime-result-scene">
+                    <div className="anime-result-stage">
+                      <img className="anime-scene-side side-left" src={ANIME_RESULT_LEFT_IMAGE} alt="" aria-hidden="true" />
+                      <img className="anime-scene-side side-right" src={ANIME_RESULT_RIGHT_IMAGE} alt="" aria-hidden="true" />
+
+                    <div className="speech-bubble bubble-left-bottom">{animeScene.bubbles[2]}</div>
+                    <div className="speech-bubble bubble-right-bottom">{animeScene.bubbles[3]}</div>
+
+                    <div className="anime-result-card">
+                      <div className="anime-result-badge">{animeScene.badge}</div>
+                      <div className="anime-scene-emoji">{summary.emoji}</div>
+                      <h2>{summary.judgement}</h2>
+                      <p className="lead">{summary.description}</p>
+
+                      <div className="result-stats">
+                        <article className="stat-card">
+                          <span>得分</span>
+                          <strong>
+                            {score} / {summary.total}
+                          </strong>
+                        </article>
+                        <article className="stat-card">
+                          <span>正确率</span>
+                          <strong>{summary.accuracy}%</strong>
+                        </article>
+                      </div>
+
+                      <div className="result-actions">
+                        <button type="button" className="primary-button" onClick={() => startRound(selectedSubject)}>
+                          {copy.resultAction}
+                        </button>
+                        <button type="button" className="ghost-button" onClick={backToHome}>
+                          重新选科目
+                        </button>
+                      </div>
+
+                      <div className="review-list">
+                        {history.map((item, index) => (
+                          <article key={item.id} className="review-card">
+                            <div className="review-head">
+                              <span>第 {index + 1} 题</span>
+                              <strong className={item.isCorrect ? 'ok' : 'bad'}>{item.isCorrect ? '答对' : '答错'}</strong>
+                            </div>
+                            <h3>{item.prompt}</h3>
+                            <p>你的答案：{item.selected}</p>
+                            {!item.isCorrect ? <p>正确答案：{item.answer}</p> : null}
+                            <p>{item.explanation}</p>
+                          </article>
+                        ))}
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className="result-emoji">{summary.emoji}</div>
                 <h2>{summary.judgement}</h2>
