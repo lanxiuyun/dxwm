@@ -692,6 +692,14 @@ export default function App() {
                   </strong>
                 </div>
 
+                {theme === 'glass' ? (
+                  <div className="glass-home-marquee" aria-hidden="true">
+                    <span className="glass-hero-chip">10Q Round</span>
+                    <span className="glass-hero-chip">{SUBJECTS.length} Subjects</span>
+                    <span className="glass-hero-chip">{globalQuestionCount} Total</span>
+                  </div>
+                ) : null}
+
                 <h1>{copy.homeTitle}</h1>
                 <p className="lead">{copy.homeSubtitle}</p>
 
@@ -699,7 +707,7 @@ export default function App() {
                 {IS_DEV ? (
                   <div className="dev-dataset-panel" aria-label="开发环境题库信息">
                     <strong>开发题库已载入：共 {globalQuestionCount} 题</strong>
-                    <small>当前代码侧每科应为 125 题，若你页面不一致，重启 dev 并强刷浏览器。</small>
+                    <small>当前代码侧每科目标为 200 题，四个难度各 50 题；若页面不一致，重启 dev 并强刷浏览器。</small>
                   </div>
                 ) : null}
                 {copy.homeFootnote ? <p className="theme-note">{copy.homeFootnote}</p> : null}
@@ -806,6 +814,13 @@ export default function App() {
                     <strong>
                       {score} / {questions.length}
                     </strong>
+                  </div>
+                ) : null}
+
+                {theme === 'glass' ? (
+                  <div className="glass-quiz-meta" aria-hidden="true">
+                    <span className="glass-hero-chip">Left {questions.length - currentIndex - 1}</span>
+                    <span className="glass-hero-chip">Keep Going</span>
                   </div>
                 ) : null}
 
@@ -919,6 +934,13 @@ export default function App() {
                 <div className="result-emoji">{summary.emoji}</div>
                 <h2>{summary.judgement}</h2>
                 <p className="lead">{summary.description}</p>
+                {theme === 'glass' ? (
+                  <div className="glass-result-pills" aria-hidden="true">
+                    <span className="glass-hero-chip">{currentSubjectThemeMeta?.short || currentSubject?.name}</span>
+                    {currentDifficulty ? <span className="glass-hero-chip">{currentDifficulty.label}</span> : null}
+                    <span className="glass-hero-chip">ACC {summary.accuracy}%</span>
+                  </div>
+                ) : null}
 
                 <div className="result-stats">
                   <article className="stat-card">
