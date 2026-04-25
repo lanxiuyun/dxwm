@@ -12,8 +12,8 @@ const REVIEW_LIST_THEME_CONFIG = {
 const ANIME_RESULT_LEFT_IMAGE = '/anime-result-left.png'
 const ANIME_RESULT_RIGHT_IMAGE = '/anime-result-right.png'
 const BACKGROUND_MUSIC_SRC = '/quiz-bgm.flac'
-const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list-v2'
-const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions-v2'
+const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list-v3'
+const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions-v3'
 const DIFFICULTIES = [
   { key: 'primary', label: '小学', matchText: '小学' },
   { key: 'middle', label: '初中', matchText: '初中' },
@@ -362,10 +362,10 @@ export default function App() {
   const [musicEnabled, setMusicEnabled] = useState(true)
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('dxwm-theme') || 'glass'
+      return localStorage.getItem('dxwm-theme-v3') || 'anime'
     }
 
-    return 'glass'
+    return 'anime'
   })
   const audioRef = useRef(null)
 
@@ -416,7 +416,7 @@ export default function App() {
 
   useEffect(() => {
     document.body.setAttribute('data-theme', theme)
-    localStorage.setItem('dxwm-theme', theme)
+    localStorage.setItem('dxwm-theme-v3', theme)
   }, [theme])
 
   useEffect(() => {
