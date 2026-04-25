@@ -2111,7 +2111,7 @@ button {
 @media (max-width: 520px) {
   [data-theme='anime'] {
     --anime-result-card-min-width: 100%;
-    --anime-content-safe-x: 8px;
+    --anime-content-safe-x: 14px;
     --anime-scene-side-height: clamp(180px, 30vw, 240px);
   }
 
@@ -2201,21 +2201,25 @@ button {
 
   [data-theme='anime'] .anime-result-stage {
     width: 100%;
+    box-sizing: border-box;
+    padding-inline: clamp(2.6rem, 10vw, 4rem);
   }
 
   [data-theme='anime'] .anime-scene-side {
     bottom: 0;
     height: var(--anime-scene-side-height);
-    max-width: 88px;
-    opacity: 0.92;
+    max-width: clamp(96px, 24vw, 122px);
+    opacity: 0.98;
   }
 
   [data-theme='anime'] .side-left {
-    left: -0.35rem;
+    left: 0;
+    transform: translateX(-42%);
   }
 
   [data-theme='anime'] .side-right {
-    right: -0.45rem;
+    right: 0;
+    transform: translateX(42%);
   }
 
   [data-theme='anime'] .speech-bubble {
@@ -2225,13 +2229,13 @@ button {
   }
 
   [data-theme='anime'] .bubble-left-bottom {
-    bottom: 7.2rem;
-    left: 0.4rem;
+    bottom: clamp(6.2rem, 20vw, 7.4rem);
+    left: clamp(1.1rem, 5vw, 1.8rem);
   }
 
   [data-theme='anime'] .bubble-right-bottom {
-    right: 0.2rem;
-    bottom: 6.5rem;
+    right: clamp(0.9rem, 4.5vw, 1.6rem);
+    bottom: clamp(5.6rem, 18vw, 6.9rem);
   }
 
   [data-theme='anime'] .review-list {
