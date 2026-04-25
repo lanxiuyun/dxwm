@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { QUESTIONS_BY_SUBJECT, SUBJECTS } from './data/questions'
 
-const IS_DEV = import.meta.env.DEV
+const IS_DEV = false
 const ROUND_SIZE = 10
 const THEMES = ['glass', 'kawaii', 'anime']
 const REVIEW_LIST_THEME_CONFIG = {
@@ -12,8 +12,8 @@ const REVIEW_LIST_THEME_CONFIG = {
 const ANIME_RESULT_LEFT_IMAGE = '/anime-result-left.png'
 const ANIME_RESULT_RIGHT_IMAGE = '/anime-result-right.png'
 const BACKGROUND_MUSIC_SRC = '/quiz-bgm.flac'
-const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list'
-const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions'
+const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list-v2'
+const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions-v2'
 const DIFFICULTIES = [
   { key: 'primary', label: '小学', matchText: '小学' },
   { key: 'middle', label: '初中', matchText: '初中' },
