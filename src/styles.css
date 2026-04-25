@@ -12,10 +12,6 @@
   --accent-soft: rgba(99, 102, 241, 0.1);
   --surface: #ffffff;
   --surface-soft: rgba(255, 255, 255, 0.82);
-  --correct-bg: rgba(240, 253, 244, 0.94);
-  --correct-border: rgba(34, 197, 94, 0.28);
-  --wrong-bg: rgba(254, 242, 242, 0.94);
-  --wrong-border: rgba(239, 68, 68, 0.28);
   --subject-accent: #6366f1;
 }
 
@@ -64,6 +60,24 @@ button {
   padding: 0 clamp(20px, 4vw, 48px);
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+.floating-music-dock {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: 3;
+  width: min(100%, 1280px);
+  padding: 0 clamp(20px, 4vw, 48px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.music-toggle {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  pointer-events: auto;
 }
 
 .floating-theme-capsule {
@@ -179,6 +193,7 @@ button {
 .quiz-head,
 .score-row,
 .review-head,
+.difficulty-head,
 .result-actions,
 .result-stats {
   display: flex;
@@ -190,14 +205,17 @@ button {
 .theme-chip,
 .primary-button,
 .ghost-button,
+.music-toggle,
 .subject-card,
+.difficulty-card,
 .option-button {
   border: 0;
   cursor: pointer;
 }
 
 .theme-chip,
-.ghost-button {
+.ghost-button,
+.music-toggle {
   transition:
     transform 0.2s ease,
     background 0.2s ease,
@@ -215,9 +233,118 @@ button {
 }
 
 .subject-grid,
+.difficulty-grid,
 .option-list,
 .review-list {
   display: grid;
+}
+
+.quiz-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.difficulty-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.difficulty-card {
+  width: 100%;
+}
+
+.difficulty-card strong,
+.difficulty-card small {
+  display: block;
+}
+
+.difficulty-card small {
+  margin-top: 0.35rem;
+}
+
+.home-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.home-stats strong {
+  font-size: 1rem;
+}
+
+.dev-dataset-panel {
+  margin-top: 0.85rem;
+  padding: 0.8rem 0.95rem;
+  border-radius: 1rem;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.dev-dataset-panel strong,
+.dev-dataset-panel small {
+  display: block;
+}
+
+.dev-dataset-panel.compact {
+  margin-top: 1rem;
+}
+
+.accuracy-good {
+  color: #16a34a;
+}
+
+.accuracy-bad {
+  color: #dc2626;
+}
+
+.back-button {
+  min-height: 42px;
+}
+
+.review-section {
+  margin-top: 1rem;
+}
+
+.review-list {
+  gap: var(--review-list-gap, 0.9rem);
+  max-height: var(--review-list-max-height, 320px);
+}
+
+.review-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0.85rem;
+}
+
+.review-section-head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.review-section-head span,
+.review-empty p {
+  color: var(--text-muted);
+}
+
+.review-empty {
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.review-empty strong,
+.review-empty p {
+  display: block;
+}
+
+.review-empty p {
+  margin-top: 0.4rem;
 }
 
 .result-stats,
@@ -350,6 +477,19 @@ button {
   --theme-pill-soft: rgba(99, 102, 241, 0.14);
 }
 
+[data-theme='glass'] .music-toggle {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px);
+  color: #4b5563;
+}
+
+[data-theme='glass'] .music-toggle.is-active {
+  color: #111827;
+  box-shadow: 0 20px 38px rgba(99, 102, 241, 0.18);
+}
+
 [data-theme='glass'] .theme-chip {
   position: relative;
   z-index: 1;
@@ -397,6 +537,38 @@ button {
   font-size: 0.82rem;
 }
 
+[data-theme='glass'] .home-stats {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
+  color: var(--text-muted);
+}
+
+[data-theme='glass'] .home-stats strong {
+  color: var(--text-main);
+}
+
+[data-theme='glass'] .home-stats .accuracy-good {
+  color: #16a34a;
+}
+
+[data-theme='glass'] .home-stats .accuracy-bad {
+  color: #dc2626;
+}
+
+[data-theme='glass'] .dev-dataset-panel {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  color: #4b5563;
+}
+
+[data-theme='glass'] .dev-dataset-panel strong {
+  color: #1f2937;
+}
+
 [data-theme='glass'] .subject-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
@@ -414,9 +586,38 @@ button {
   transition: all 0.3s;
 }
 
+[data-theme='glass'] .difficulty-card {
+  padding: 1.2rem 1rem;
+  border-radius: 1.4rem;
+  background: white;
+  text-align: left;
+  border: 2px solid transparent;
+  color: var(--text-main);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
+}
+
 [data-theme='glass'] .subject-card:hover {
   transform: translateY(-5px);
   border-color: var(--subject-accent);
+}
+
+[data-theme='glass'] .difficulty-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--subject-accent);
+}
+
+[data-theme='glass'] .subject-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  border-color: transparent;
+}
+
+[data-theme='glass'] .difficulty-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
 }
 
 [data-theme='glass'] .subject-icon {
@@ -439,6 +640,10 @@ button {
   font-size: 0.78rem;
 }
 
+[data-theme='glass'] .difficulty-card small {
+  color: #9ca3af;
+}
+
 [data-theme='glass'] .quiz-head {
   margin-bottom: 1rem;
 }
@@ -454,6 +659,11 @@ button {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.05em;
+}
+
+[data-theme='glass'] .secondary-tag {
+  background: rgba(17, 24, 39, 0.06);
+  color: #4b5563;
 }
 
 [data-theme='glass'] .progress-text {
@@ -533,15 +743,13 @@ button {
   font-weight: 700;
 }
 
-[data-theme='glass'] .option-button.is-correct,
-[data-theme='glass'] .option-button.is-wrong {
+[data-theme='glass'] .option-button.is-selected {
   color: white;
   background: var(--subject-accent);
   border-color: transparent;
 }
 
-[data-theme='glass'] .option-button.is-correct .option-key,
-[data-theme='glass'] .option-button.is-wrong .option-key {
+[data-theme='glass'] .option-button.is-selected .option-key {
   background: rgba(255, 255, 255, 0.2);
   color: white;
 }
@@ -618,6 +826,11 @@ button {
   font-weight: 700;
 }
 
+[data-theme='glass'] .primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
 [data-theme='glass'] .ghost-button {
   flex: 1 1 140px;
   min-height: 54px;
@@ -628,12 +841,20 @@ button {
 }
 
 [data-theme='glass'] .review-list {
-  gap: 0.9rem;
-  margin-top: 1rem;
+  margin-top: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
 }
 
 [data-theme='glass'] .review-card {
   padding: 1rem;
+  min-height: var(--review-card-min-height, 156px);
+}
+
+[data-theme='glass'] .review-empty {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
 }
 
 [data-theme='glass'] .review-head {
@@ -670,6 +891,21 @@ button {
 
 [data-theme='kawaii'] .floating-theme-capsule {
   --theme-pill-soft: rgba(255, 183, 197, 0.22);
+}
+
+[data-theme='kawaii'] .music-toggle {
+  background: #fff;
+  border: 3px solid #ffb7c5;
+  box-shadow: 0 6px 0 #ffb7c5;
+  color: #b6909d;
+  font-weight: 900;
+}
+
+[data-theme='kawaii'] .music-toggle.is-active {
+  background: #fff3a0;
+  border-color: #ffd845;
+  box-shadow: 0 6px 0 #ffd845;
+  color: #8a5b20;
 }
 
 [data-theme='kawaii'] .theme-chip {
@@ -733,6 +969,39 @@ button {
   font-weight: 700;
 }
 
+[data-theme='kawaii'] .home-stats {
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #ffd7e2;
+  box-shadow: 0 6px 0 rgba(255, 183, 197, 0.32);
+  color: #8c7b93;
+}
+
+[data-theme='kawaii'] .home-stats strong {
+  color: #ff7d9b;
+}
+
+[data-theme='kawaii'] .home-stats .accuracy-good {
+  color: #16a34a;
+}
+
+[data-theme='kawaii'] .home-stats .accuracy-bad {
+  color: #dc2626;
+}
+
+[data-theme='kawaii'] .dev-dataset-panel {
+  background: #fff;
+  border: 3px dashed #ffd7e2;
+  box-shadow: 0 6px 0 rgba(255, 183, 197, 0.2);
+  color: #8c7b93;
+}
+
+[data-theme='kawaii'] .dev-dataset-panel strong {
+  color: #ff7d9b;
+}
+
 [data-theme='kawaii'] .subject-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
@@ -750,9 +1019,39 @@ button {
   transition: 0.3s;
 }
 
+[data-theme='kawaii'] .difficulty-card {
+  padding: 1rem;
+  border-radius: 2rem;
+  background: #fff;
+  border: 3px solid #ffb7c5;
+  box-shadow: 0 6px 0 #ffb7c5;
+  color: var(--text-main);
+  text-align: center;
+  transition: 0.3s;
+}
+
 [data-theme='kawaii'] .subject-card:hover {
   transform: scale(1.05);
   background: #fffdf5;
+}
+
+[data-theme='kawaii'] .difficulty-card:hover {
+  transform: scale(1.03);
+  background: #fffdf5;
+}
+
+[data-theme='kawaii'] .subject-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  background: #fff;
+}
+
+[data-theme='kawaii'] .difficulty-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  background: #fff;
 }
 
 [data-theme='kawaii'] .subject-icon {
@@ -777,6 +1076,10 @@ button {
   font-size: 0.76rem;
 }
 
+[data-theme='kawaii'] .difficulty-card small {
+  color: #b396ad;
+}
+
 [data-theme='kawaii'] .quiz-head {
   margin-bottom: 0.75rem;
   padding: 0 0.2rem;
@@ -792,6 +1095,11 @@ button {
   color: color-mix(in srgb, var(--subject-accent) 78%, #5d4a66);
   font-size: 0.76rem;
   font-weight: 900;
+}
+
+[data-theme='kawaii'] .secondary-tag {
+  background: #fff4ba;
+  color: #8a5b20;
 }
 
 [data-theme='kawaii'] .progress-text {
@@ -867,16 +1175,10 @@ button {
   font-weight: 900;
 }
 
-[data-theme='kawaii'] .option-button.is-correct {
+[data-theme='kawaii'] .option-button.is-selected {
   background: #c1f9d2;
   border-color: #55d67b;
   box-shadow: 0 6px 0 #55d67b;
-}
-
-[data-theme='kawaii'] .option-button.is-wrong {
-  background: #ffd1d1;
-  border-color: #ff7d7d;
-  box-shadow: 0 6px 0 #ff7d7d;
 }
 
 [data-theme='kawaii'] .option-text {
@@ -948,6 +1250,13 @@ button {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+[data-theme='kawaii'] .primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  box-shadow: 0 6px 0 #ff6d8d;
+}
+
 [data-theme='kawaii'] .ghost-button {
   flex: 1 1 140px;
   min-height: 56px;
@@ -983,12 +1292,20 @@ button {
 }
 
 [data-theme='kawaii'] .review-list {
-  gap: 0.9rem;
-  margin-top: 1rem;
+  margin-top: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem;
 }
 
 [data-theme='kawaii'] .review-card {
   padding: 1rem;
+  min-height: var(--review-card-min-height, 164px);
+}
+
+[data-theme='kawaii'] .review-empty {
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #fff;
+  box-shadow: 0 8px 0 rgba(255, 183, 197, 0.32);
 }
 
 [data-theme='kawaii'] .review-head {
@@ -1006,9 +1323,9 @@ button {
   --page-bg: #fefce8;
   --text-main: #1e293b;
   --text-muted: #64748b;
-  --anime-result-card-min-height: 980px;
   --anime-result-card-min-width: 456px;
   --anime-content-safe-x: 24px;
+  --anime-scene-side-height: clamp(240px, 38vw, 420px);
 }
 
 [data-theme='anime'] body {
@@ -1034,6 +1351,19 @@ button {
 
 [data-theme='anime'] .floating-theme-capsule {
   --theme-pill-soft: rgba(253, 224, 71, 0.24);
+}
+
+[data-theme='anime'] .music-toggle {
+  border: 3px solid #1e293b;
+  background: white;
+  box-shadow: 4px 4px 0 #1e293b;
+  color: #1e293b;
+  font-family: 'ZCOOL KuaiLe', 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+}
+
+[data-theme='anime'] .music-toggle.is-active {
+  background: #fde68a;
 }
 
 [data-theme='anime'] .theme-chip {
@@ -1126,6 +1456,40 @@ button {
   font-weight: 700;
 }
 
+[data-theme='anime'] .home-stats {
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border: 3px solid #1e293b;
+  background: white;
+  box-shadow: 4px 4px 0 #1e293b;
+  color: #475569;
+  font-weight: 700;
+}
+
+[data-theme='anime'] .home-stats strong {
+  color: #1e293b;
+}
+
+[data-theme='anime'] .home-stats .accuracy-good {
+  color: #16a34a;
+}
+
+[data-theme='anime'] .home-stats .accuracy-bad {
+  color: #dc2626;
+}
+
+[data-theme='anime'] .dev-dataset-panel {
+  background: white;
+  border: 3px solid #1e293b;
+  box-shadow: 4px 4px 0 #1e293b;
+  color: #475569;
+  font-weight: 700;
+}
+
+[data-theme='anime'] .dev-dataset-panel strong {
+  color: #1e293b;
+}
+
 [data-theme='anime'] .subject-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
@@ -1143,9 +1507,39 @@ button {
   transition: 0.2s;
 }
 
+[data-theme='anime'] .difficulty-card {
+  padding: 1rem;
+  border: 3px solid #1e293b;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 4px 4px 0 #1e293b;
+  text-align: center;
+  color: var(--text-main);
+  transition: 0.2s;
+}
+
 [data-theme='anime'] .subject-card:hover {
   transform: scale(1.05) rotate(2deg);
   background: #fbcfe8;
+}
+
+[data-theme='anime'] .difficulty-card:hover {
+  transform: scale(1.03) rotate(1deg);
+  background: #fef3c7;
+}
+
+[data-theme='anime'] .subject-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  background: white;
+}
+
+[data-theme='anime'] .difficulty-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  background: white;
 }
 
 [data-theme='anime'] .subject-icon {
@@ -1168,6 +1562,10 @@ button {
   font-size: 0.78rem;
 }
 
+[data-theme='anime'] .difficulty-card small {
+  color: #64748b;
+}
+
 [data-theme='anime'] .quiz-head {
   margin-bottom: 0.4rem;
   align-items: flex-end;
@@ -1183,6 +1581,11 @@ button {
   font-size: 0.72rem;
   font-weight: 900;
   font-style: italic;
+}
+
+[data-theme='anime'] .secondary-tag {
+  background: white;
+  border: 2px solid #1e293b;
 }
 
 [data-theme='anime'] .progress-text {
@@ -1255,16 +1658,10 @@ button {
   line-height: 1;
 }
 
-[data-theme='anime'] .option-button.is-correct {
+[data-theme='anime'] .option-button.is-selected {
   background: #bbf7d0;
   border-color: #166534;
   box-shadow: 6px 6px 0 #166534;
-}
-
-[data-theme='anime'] .option-button.is-wrong {
-  background: #fecaca;
-  border-color: #991b1b;
-  box-shadow: 6px 6px 0 #991b1b;
 }
 
 [data-theme='anime'] .option-text {
@@ -1282,7 +1679,6 @@ button {
 [data-theme='anime'] .anime-result-stage {
   position: relative;
   width: fit-content;
-  min-height: var(--anime-result-card-min-height);
   margin: 0 auto;
 }
 
@@ -1292,7 +1688,6 @@ button {
   margin: 0 auto;
   width: min(100%, var(--anime-result-card-min-width));
   min-width: var(--anime-result-card-min-width);
-  min-height: var(--anime-result-card-min-height);
   padding: 1.25rem calc(1rem + var(--anime-content-safe-x)) 1rem;
   border: 4px solid #1e293b;
   background: #fffef7;
@@ -1325,7 +1720,7 @@ button {
   position: absolute;
   z-index: 4;
   bottom: 0;
-  height: calc(var(--anime-result-card-min-height) - 2.25rem);
+  height: var(--anime-scene-side-height);
   width: auto;
   max-width: 210px;
   filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.16));
@@ -1373,7 +1768,7 @@ button {
 }
 
 [data-theme='anime'] .anime-result-card .review-list {
-  margin-top: 1.1rem;
+  margin-top: 0;
 }
 
 [data-theme='anime'] .result-panel > .result-emoji,
@@ -1381,7 +1776,8 @@ button {
 [data-theme='anime'] .result-panel > .lead,
 [data-theme='anime'] .result-panel > .result-stats,
 [data-theme='anime'] .result-panel > .result-actions,
-[data-theme='anime'] .result-panel > .review-list {
+[data-theme='anime'] .result-panel > .review-list,
+[data-theme='anime'] .result-panel > .review-section {
   display: none;
 }
 
@@ -1449,6 +1845,11 @@ button {
   color: #1e293b;
 }
 
+[data-theme='anime'] .primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
 [data-theme='anime'] .ghost-button {
   flex: 1 1 140px;
   background: white;
@@ -1476,9 +1877,11 @@ button {
 }
 
 [data-theme='anime'] .review-list {
-  gap: 0.9rem;
-  margin-top: 1rem;
-  grid-auto-rows: minmax(172px, auto);
+  margin-top: 0;
+  max-height: min(var(--review-list-max-height, 358px), 42vh);
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  grid-auto-rows: minmax(var(--review-card-min-height, 172px), auto);
 }
 
 [data-theme='anime'] .review-card {
@@ -1486,7 +1889,13 @@ button {
   flex-direction: column;
   justify-content: flex-start;
   padding: 1rem calc(1rem + 8px);
-  min-height: 172px;
+  min-height: var(--review-card-min-height, 172px);
+}
+
+[data-theme='anime'] .review-empty {
+  border: 3px solid #1e293b;
+  background: white;
+  box-shadow: 6px 6px 0 #1e293b;
 }
 
 [data-theme='anime'] .review-head {
@@ -1522,15 +1931,24 @@ button {
 
 @media (max-width: 520px) {
   [data-theme='anime'] {
-    --anime-result-card-min-height: 900px;
     --anime-result-card-min-width: 100%;
     --anime-content-safe-x: 8px;
+    --anime-scene-side-height: clamp(180px, 30vw, 240px);
   }
 
   .floating-theme-dock {
     left: 0;
     right: 0;
     bottom: 12px;
+    width: 100%;
+    padding: 0 12px;
+    transform: none;
+  }
+
+  .floating-music-dock {
+    top: 12px;
+    left: 0;
+    right: 0;
     width: 100%;
     padding: 0 12px;
     transform: none;
@@ -1571,6 +1989,7 @@ button {
   }
 
   .subject-grid,
+  .difficulty-grid,
   .result-stats,
   .result-actions {
     grid-template-columns: 1fr;
@@ -1579,6 +1998,7 @@ button {
   }
 
   .subject-card,
+  .difficulty-card,
   .primary-button,
   .ghost-button {
     width: 100%;
@@ -1597,7 +2017,6 @@ button {
 
   [data-theme='anime'] .anime-result-card {
     width: 100%;
-    min-height: var(--anime-result-card-min-height);
     padding: 1.15rem 0.85rem 0.85rem;
   }
 
@@ -1607,7 +2026,7 @@ button {
 
   [data-theme='anime'] .anime-scene-side {
     bottom: 0;
-    height: calc(var(--anime-result-card-min-height) - 3rem);
+    height: var(--anime-scene-side-height);
     max-width: 88px;
     opacity: 0.92;
   }
@@ -1637,11 +2056,12 @@ button {
   }
 
   [data-theme='anime'] .review-list {
-    grid-auto-rows: minmax(156px, auto);
+    max-height: min(var(--review-list-max-height, 320px), 36vh);
+    grid-auto-rows: minmax(var(--review-card-min-height, 156px), auto);
   }
 
   [data-theme='anime'] .review-card {
-    min-height: 156px;
+    min-height: var(--review-card-min-height, 156px);
   }
 
   .glass-backdrop .blob-a,

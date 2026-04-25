@@ -1,10 +1,25 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { QUESTIONS_BY_SUBJECT, SUBJECTS } from './data/questions'
 
-const ROUND_SIZE = 5
+const IS_DEV = import.meta.env.DEV
+const ROUND_SIZE = 10
 const THEMES = ['glass', 'kawaii', 'anime']
-const ANIME_RESULT_LEFT_IMAGE = '/ChatGPT%20Image%20%E7%AD%94%E9%A2%98%E7%BB%93%E6%9E%9C%E5%B7%A6%E4%BE%A7.png'
-const ANIME_RESULT_RIGHT_IMAGE = '/ChatGPT%20Image%20%E7%AD%94%E9%A2%98%E7%BB%93%E6%9E%9C%E5%8F%B3%E4%BE%A7.png'
+const REVIEW_LIST_THEME_CONFIG = {
+  glass: { cardMinHeight: 156, gap: 14, maxVisibleCards: 3 },
+  kawaii: { cardMinHeight: 164, gap: 14, maxVisibleCards: 3 },
+  anime: { cardMinHeight: 172, gap: 14, maxVisibleCards: 2 },
+}
+const ANIME_RESULT_LEFT_IMAGE = '/anime-result-left.png'
+const ANIME_RESULT_RIGHT_IMAGE = '/anime-result-right.png'
+const BACKGROUND_MUSIC_SRC = '/quiz-bgm.flac'
+const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list'
+const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions'
+const DIFFICULTIES = [
+  { key: 'primary', label: '小学', matchText: '小学' },
+  { key: 'middle', label: '初中', matchText: '初中' },
+  { key: 'high', label: '高中', matchText: '高中' },
+  { key: 'college', label: '大学', matchText: '大学' },
+]
 
 const THEME_COPY = {
   glass: {
@@ -26,7 +41,7 @@ const THEME_COPY = {
     homeTitle: '文盲程度检测.exe',
     homeSubtitle: '赌上大学生的尊严！',
     homeFootnote: 'ACG 学园特别版',
-    resultAction: '返回大厅',
+    resultAction: '再来一次',
   },
 }
 
@@ -65,8 +80,139 @@ function shuffle(items) {
   return result
 }
 
-function buildRound(subjectKey) {
-  return shuffle(QUESTIONS_BY_SUBJECT[subjectKey]).slice(0, ROUND_SIZE)
+function matchesDifficulty(question, difficultyKey) {
+  const target = DIFFICULTIES.find((item) => item.key === difficultyKey)
+
+  if (!target) return true
+
+  return String(question.level || '').includes(target.matchText)
+}
+
+function getDifficultyCountSummary(items) {
+  return DIFFICULTIES.map((difficulty) => {
+    const count = items.filter((item) => matchesDifficulty(item, difficulty.key)).length
+    return `${difficulty.label}${count}`
+  }).join(' / ')
+}
+
+function inferQuestionType(question) {
+  if (question.type) return question.type
+
+  const prompt = String(question.prompt || '')
+  const subject = String(question.subject || '')
+
+  if (prompt.includes('下一句') || prompt.includes('上一句') || prompt.includes('出自哪首诗')) {
+    return 'poem'
+  }
+
+  if (prompt.includes('作者是') || prompt.includes('哪个朝代') || prompt.includes('哪部') || prompt.includes('与谁有关')) {
+    return 'literature'
+  }
+
+  if (prompt.includes('意思') || prompt.includes('成语') || prompt.includes('词语') || prompt.includes('修辞')) {
+    return 'language'
+  }
+
+  if (prompt.includes('等于多少') || prompt.includes('等于？') || prompt.includes('面积') || prompt.includes('周长')) {
+    return 'calculation'
+  }
+
+  if (prompt.includes('公式') || prompt.includes('单位') || prompt.includes('化学式') || prompt.includes('符号')) {
+    return 'formula'
+  }
+
+  if (prompt.includes('反义词') || prompt.includes('中文意思') || prompt.includes('英文') || prompt.includes('应填')) {
+    return 'vocabulary'
+  }
+
+  if (prompt.includes('现象') || prompt.includes('变化') || prompt.includes('作用') || prompt.includes('因为')) {
+    return 'phenomenon'
+  }
+
+  if (subject.includes('数学')) return 'math-concept'
+  if (subject.includes('英语')) return 'english-basic'
+  if (subject.includes('物理') || subject.includes('化学')) return 'science-basic'
+  if (subject.includes('语文')) return 'chinese-basic'
+
+  return 'general'
+}
+
+function pickDiversifiedRound(items) {
+  const grouped = items.reduce((result, item) => {
+    const type = inferQuestionType(item)
+
+    if (!result[type]) {
+      result[type] = []
+    }
+
+    result[type].push(item)
+    return result
+  }, {})
+  const orderedTypes = shuffle(Object.keys(grouped))
+  const round = []
+
+  while (round.length < ROUND_SIZE && orderedTypes.some((type) => grouped[type].length > 0)) {
+    orderedTypes.forEach((type) => {
+      if (round.length >= ROUND_SIZE || grouped[type].length === 0) return
+
+      round.push(grouped[type].shift())
+    })
+  }
+
+  return round
+}
+
+function getAvailableQuestions(subjectKey, difficultyKey, answeredQuestionIds, isDev) {
+  return QUESTIONS_BY_SUBJECT[subjectKey].filter((item) => {
+    if (!matchesDifficulty(item, difficultyKey)) return false
+    if (isDev) return true
+
+    return !answeredQuestionIds.includes(item.id)
+  })
+}
+
+function buildRound(subjectKey, difficultyKey, answeredQuestionIds, isDev) {
+  const availableQuestions = shuffle(getAvailableQuestions(subjectKey, difficultyKey, answeredQuestionIds, isDev))
+
+  return pickDiversifiedRound(availableQuestions)
+}
+
+function loadShameList() {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const raw = window.localStorage.getItem(SHAME_LIST_STORAGE_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function saveShameList(items) {
+  if (typeof window === 'undefined') return
+
+  window.localStorage.setItem(SHAME_LIST_STORAGE_KEY, JSON.stringify(items))
+}
+
+function loadAnsweredQuestionIds() {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const raw = window.localStorage.getItem(ANSWERED_QUESTION_STORAGE_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function saveAnsweredQuestionIds(items) {
+  if (typeof window === 'undefined') return
+
+  window.localStorage.setItem(ANSWERED_QUESTION_STORAGE_KEY, JSON.stringify(items))
 }
 
 function getJudgement(score, total, theme) {
@@ -152,6 +298,18 @@ function getAnimeResultScene(score, total) {
   }
 }
 
+function getReviewListStyle(theme, count) {
+  const config = REVIEW_LIST_THEME_CONFIG[theme] || REVIEW_LIST_THEME_CONFIG.glass
+  const visibleCount = Math.min(Math.max(count, 1), config.maxVisibleCards)
+  const maxHeight = visibleCount * config.cardMinHeight + Math.max(visibleCount - 1, 0) * config.gap
+
+  return {
+    '--review-card-min-height': `${config.cardMinHeight}px`,
+    '--review-list-gap': `${config.gap}px`,
+    '--review-list-max-height': `${maxHeight}px`,
+  }
+}
+
 function ThemeBackdrop({ theme }) {
   if (theme === 'anime') {
     return (
@@ -193,12 +351,15 @@ function ThemeBackdrop({ theme }) {
 export default function App() {
   const [phase, setPhase] = useState('home')
   const [selectedSubject, setSelectedSubject] = useState(null)
+  const [selectedDifficulty, setSelectedDifficulty] = useState(null)
   const [questions, setQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState(null)
   const [locked, setLocked] = useState(false)
   const [score, setScore] = useState(0)
-  const [history, setHistory] = useState([])
+  const [shameList, setShameList] = useState(() => loadShameList())
+  const [answeredQuestionIds, setAnsweredQuestionIds] = useState(() => loadAnsweredQuestionIds())
+  const [musicEnabled, setMusicEnabled] = useState(true)
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('dxwm-theme') || 'glass'
@@ -206,12 +367,52 @@ export default function App() {
 
     return 'glass'
   })
+  const audioRef = useRef(null)
 
   const copy = THEME_COPY[theme]
   const currentQuestion = questions[currentIndex]
   const currentSubject = SUBJECTS.find((item) => item.key === selectedSubject)
+  const currentDifficulty = DIFFICULTIES.find((item) => item.key === selectedDifficulty)
   const currentSubjectThemeMeta = selectedSubject ? SUBJECT_THEME_META[theme][selectedSubject] : null
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0
+  const availableQuestionCountBySubject = useMemo(
+    () =>
+      SUBJECTS.reduce((result, subject) => {
+        result[subject.key] = getAvailableQuestions(subject.key, null, answeredQuestionIds, IS_DEV).length
+        return result
+      }, {}),
+    [answeredQuestionIds],
+  )
+  const availableQuestionCountByDifficulty = useMemo(() => {
+    if (!selectedSubject) return {}
+
+    return DIFFICULTIES.reduce((result, difficulty) => {
+      result[difficulty.key] = getAvailableQuestions(selectedSubject, difficulty.key, answeredQuestionIds, IS_DEV).length
+      return result
+    }, {})
+  }, [answeredQuestionIds, selectedSubject])
+  const totalQuestionCountBySubject = useMemo(
+    () =>
+      SUBJECTS.reduce((result, subject) => {
+        result[subject.key] = QUESTIONS_BY_SUBJECT[subject.key]?.length ?? 0
+        return result
+      }, {}),
+    [],
+  )
+  const difficultySummaryBySubject = useMemo(
+    () =>
+      SUBJECTS.reduce((result, subject) => {
+        result[subject.key] = getDifficultyCountSummary(QUESTIONS_BY_SUBJECT[subject.key] || [])
+        return result
+      }, {}),
+    [],
+  )
+  const selectedSubjectQuestionTotal = selectedSubject ? totalQuestionCountBySubject[selectedSubject] ?? 0 : 0
+  const selectedSubjectDifficultySummary = selectedSubject ? difficultySummaryBySubject[selectedSubject] ?? '' : ''
+  const globalQuestionCount = useMemo(
+    () => Object.values(totalQuestionCountBySubject).reduce((sum, count) => sum + count, 0),
+    [totalQuestionCountBySubject],
+  )
 
   useEffect(() => {
     document.body.setAttribute('data-theme', theme)
@@ -246,16 +447,120 @@ export default function App() {
       emoji: getResultEmoji(score, questions.length, theme),
     }
   }, [phase, questions.length, score, theme])
-  const animeScene = phase === 'result' && summary ? getAnimeResultScene(score, summary.total) : null
+  const currentSubjectShameList = useMemo(() => {
+    if (!selectedSubject) return []
 
-  const startRound = (subjectKey) => {
+    return shameList.filter(
+      (item) => item.subjectKey === selectedSubject || item.subject === currentSubject?.name,
+    )
+  }, [currentSubject?.name, selectedSubject, shameList])
+  const currentDifficultyRemainingCount = selectedDifficulty
+    ? availableQuestionCountByDifficulty[selectedDifficulty] ?? 0
+    : 0
+  const shameListCount = currentSubjectShameList.length
+  const homeStats = useMemo(() => {
+    const wrongCount = shameList.length
+    const totalAnswered = answeredQuestionIds.length
+    const correctCount = Math.max(totalAnswered - wrongCount, 0)
+    const accuracy = totalAnswered ? Math.round((correctCount / totalAnswered) * 100) : 0
+
+    return {
+      correctCount,
+      wrongCount,
+      accuracy,
+    }
+  }, [answeredQuestionIds.length, shameList.length])
+  const animeScene = phase === 'result' && summary ? getAnimeResultScene(score, summary.total) : null
+  const reviewListStyle = useMemo(() => getReviewListStyle(theme, shameListCount), [theme, shameListCount])
+
+  const stopBackgroundMusic = async () => {
+    if (!audioRef.current) return
+
+    audioRef.current.pause()
+    audioRef.current.currentTime = 0
+  }
+
+  const startBackgroundMusic = async () => {
+    if (typeof window === 'undefined') return
+
+    if (!audioRef.current) {
+      audioRef.current = new Audio(BACKGROUND_MUSIC_SRC)
+      audioRef.current.loop = true
+      audioRef.current.volume = 0.35
+    }
+
+    audioRef.current.currentTime = 0
+    await audioRef.current.play()
+  }
+
+  useEffect(() => {
+    if (!musicEnabled) {
+      stopBackgroundMusic()
+      return undefined
+    }
+
+    let cancelled = false
+    let detachRetryListener = null
+
+    const tryPlay = async () => {
+      try {
+        await startBackgroundMusic()
+      } catch {
+        if (cancelled || typeof window === 'undefined') return
+
+        const retry = async () => {
+          window.removeEventListener('pointerdown', retry)
+          window.removeEventListener('keydown', retry)
+
+          try {
+            await startBackgroundMusic()
+          } catch {
+            setMusicEnabled(false)
+          }
+        }
+
+        detachRetryListener = () => {
+          window.removeEventListener('pointerdown', retry)
+          window.removeEventListener('keydown', retry)
+        }
+
+        window.addEventListener('pointerdown', retry, { once: true })
+        window.addEventListener('keydown', retry, { once: true })
+      }
+    }
+
+    tryPlay()
+
+    return () => {
+      cancelled = true
+      detachRetryListener?.()
+    }
+  }, [musicEnabled])
+
+  useEffect(() => () => {
+    stopBackgroundMusic()
+  }, [])
+
+  const chooseSubject = (subjectKey) => {
     setSelectedSubject(subjectKey)
-    setQuestions(buildRound(subjectKey))
+    setSelectedDifficulty(null)
+    setPhase('difficulty')
+  }
+
+  const startRound = (subjectKey, difficultyKey) => {
+    const roundQuestions = buildRound(subjectKey, difficultyKey, answeredQuestionIds, IS_DEV)
+
+    if (!roundQuestions.length) {
+      return
+    }
+
+    setSelectedSubject(subjectKey)
+    setSelectedDifficulty(difficultyKey)
+    setQuestions(roundQuestions)
     setCurrentIndex(0)
     setSelectedOption(null)
     setLocked(false)
     setScore(0)
-    setHistory([])
     setPhase('playing')
   }
 
@@ -266,38 +571,77 @@ export default function App() {
 
     setSelectedOption(option)
     setLocked(true)
+    setAnsweredQuestionIds((current) => {
+      if (current.includes(currentQuestion.id)) {
+        return current
+      }
+
+      const next = [...current, currentQuestion.id]
+      saveAnsweredQuestionIds(next)
+      return next
+    })
 
     if (isCorrect) {
       setScore((currentScore) => currentScore + 1)
-    }
+    } else {
+      setShameList((current) => {
+        if (current.some((item) => item.id === currentQuestion.id)) {
+          return current
+        }
 
-    setHistory((items) => [
-      ...items,
-      {
-        id: currentQuestion.id,
-        prompt: currentQuestion.prompt,
-        selected: option,
-        answer: currentQuestion.answer,
-        explanation: currentQuestion.explanation,
-        isCorrect,
-      },
-    ])
+        const next = [
+          ...current,
+          {
+            id: currentQuestion.id,
+            prompt: currentQuestion.prompt,
+            selected: option,
+            answer: currentQuestion.answer,
+            explanation: currentQuestion.explanation,
+            subject: currentQuestion.subject,
+            subjectKey: selectedSubject,
+          },
+        ]
+
+        saveShameList(next)
+        return next
+      })
+    }
   }
 
   const backToHome = () => {
     setPhase('home')
     setSelectedSubject(null)
+    setSelectedDifficulty(null)
     setQuestions([])
     setCurrentIndex(0)
     setSelectedOption(null)
     setLocked(false)
     setScore(0)
-    setHistory([])
+  }
+
+  const toggleMusic = async () => {
+    if (musicEnabled) {
+      setMusicEnabled(false)
+      return
+    }
+
+    setMusicEnabled(true)
   }
 
   return (
     <div className="app-shell">
       <ThemeBackdrop theme={theme} />
+
+      <div className="floating-music-dock">
+        <button
+          type="button"
+          className={`music-toggle ${musicEnabled ? 'is-active' : ''}`}
+          onClick={toggleMusic}
+          aria-pressed={musicEnabled}
+        >
+          {musicEnabled ? '背景音乐 开' : '背景音乐 关'}
+        </button>
+      </div>
 
       <div className="floating-theme-dock">
         <div
@@ -340,28 +684,97 @@ export default function App() {
 
                 {theme === 'kawaii' ? <div className="home-emoji">🍭</div> : null}
 
+                <div className="home-stats" aria-label="总答题统计">
+                  <span>对：{homeStats.correctCount}</span>
+                  <span>错：{homeStats.wrongCount}</span>
+                  <strong className={homeStats.accuracy >= 60 ? 'accuracy-good' : 'accuracy-bad'}>
+                    正确率：{homeStats.accuracy}%
+                  </strong>
+                </div>
+
                 <h1>{copy.homeTitle}</h1>
                 <p className="lead">{copy.homeSubtitle}</p>
 
+                {IS_DEV ? <p className="theme-note">当前为调试环境：允许重复拿题</p> : null}
+                {IS_DEV ? (
+                  <div className="dev-dataset-panel" aria-label="开发环境题库信息">
+                    <strong>开发题库已载入：共 {globalQuestionCount} 题</strong>
+                    <small>当前代码侧每科应为 125 题，若你页面不一致，重启 dev 并强刷浏览器。</small>
+                  </div>
+                ) : null}
                 {copy.homeFootnote ? <p className="theme-note">{copy.homeFootnote}</p> : null}
 
                 <div className="subject-grid">
                   {SUBJECTS.map((subject) => {
                     const subjectMeta = SUBJECT_THEME_META[theme][subject.key]
+                    const remainingCount = availableQuestionCountBySubject[subject.key] ?? 0
+                    const totalCount = totalQuestionCountBySubject[subject.key] ?? 0
+                    const difficultySummary = difficultySummaryBySubject[subject.key] ?? ''
 
                     return (
                       <button
                         key={subject.key}
                         type="button"
                         className="subject-card"
-                        onClick={() => startRound(subject.key)}
+                        onClick={() => chooseSubject(subject.key)}
+                        disabled={remainingCount === 0}
                         style={{ '--subject-accent': subjectMeta.accent }}
                       >
                         <span className="subject-icon">{subjectMeta.icon}</span>
                         <span className="subject-copy">
                           <strong>{subjectMeta.short}</strong>
                           <small>{subject.name}</small>
+                          <small>
+                            {remainingCount
+                              ? `${IS_DEV ? '当前可抽' : '剩余'} ${remainingCount} 题`
+                              : IS_DEV
+                                ? '当前难度暂无题目'
+                                : '本学科已答完'}
+                          </small>
+                          {IS_DEV ? <small>题库总量 {totalCount} 题</small> : null}
+                          {IS_DEV ? <small>{difficultySummary}</small> : null}
                         </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            ) : null}
+
+            {phase === 'difficulty' && currentSubject ? (
+              <>
+                <div className="difficulty-head">
+                  <span className="subject-tag">{currentSubjectThemeMeta?.short || currentSubject.name}</span>
+                  <button type="button" className="ghost-button back-button" onClick={backToHome}>
+                    返回选科
+                  </button>
+                </div>
+
+                <h2 className="question-title">选择难度</h2>
+                <p className="lead">先选一个阶段，再进入本轮 10 题。</p>
+                {IS_DEV ? (
+                  <div className="dev-dataset-panel compact" aria-label="当前学科题库信息">
+                    <strong>
+                      {currentSubject.name} 当前题库 {selectedSubjectQuestionTotal} 题
+                    </strong>
+                    <small>{selectedSubjectDifficultySummary}</small>
+                  </div>
+                ) : null}
+
+                <div className="difficulty-grid">
+                  {DIFFICULTIES.map((difficulty) => {
+                    const remainingCount = availableQuestionCountByDifficulty[difficulty.key] ?? 0
+
+                    return (
+                      <button
+                        key={difficulty.key}
+                        type="button"
+                        className="difficulty-card"
+                        onClick={() => startRound(selectedSubject, difficulty.key)}
+                        disabled={remainingCount === 0}
+                      >
+                        <strong>{difficulty.label}</strong>
+                        <small>{remainingCount ? `${IS_DEV ? '当前可抽' : '剩余'} ${remainingCount} 题` : '暂无可答题目'}</small>
                       </button>
                     )
                   })}
@@ -372,7 +785,10 @@ export default function App() {
             {phase === 'playing' && currentQuestion ? (
               <>
                 <div className="quiz-head">
-                  <span className="subject-tag">{currentSubjectThemeMeta?.short || currentSubject?.name}</span>
+                  <div className="quiz-tags">
+                    <span className="subject-tag">{currentSubjectThemeMeta?.short || currentSubject?.name}</span>
+                    {currentDifficulty ? <span className="subject-tag secondary-tag">{currentDifficulty.label}</span> : null}
+                  </div>
                   <span className="progress-text">
                     {theme === 'anime'
                       ? `${String(currentIndex + 1).padStart(2, '0')}/${String(questions.length).padStart(2, '0')}`
@@ -398,14 +814,7 @@ export default function App() {
                 <div className="option-list">
                   {currentQuestion.options.map((option, index) => {
                     const isSelected = option === selectedOption
-                    const isCorrect = option === currentQuestion.answer
-                    const stateClass = locked
-                      ? isCorrect
-                        ? 'is-correct'
-                        : isSelected
-                          ? 'is-wrong'
-                          : ''
-                      : ''
+                    const stateClass = locked && isSelected ? 'is-selected' : ''
 
                     return (
                       <button
@@ -461,28 +870,47 @@ export default function App() {
                       </div>
 
                       <div className="result-actions">
-                        <button type="button" className="primary-button" onClick={() => startRound(selectedSubject)}>
-                          {copy.resultAction}
+                        <button
+                          type="button"
+                          className="primary-button"
+                          onClick={() => startRound(selectedSubject, selectedDifficulty)}
+                          disabled={currentDifficultyRemainingCount === 0}
+                        >
+                          {currentDifficultyRemainingCount === 0 ? '当前难度已答完' : copy.resultAction}
                         </button>
                         <button type="button" className="ghost-button" onClick={backToHome}>
                           重新选科目
                         </button>
                       </div>
 
-                      <div className="review-list">
-                        {history.map((item, index) => (
-                          <article key={item.id} className="review-card">
-                            <div className="review-head">
-                              <span>第 {index + 1} 题</span>
-                              <strong className={item.isCorrect ? 'ok' : 'bad'}>{item.isCorrect ? '答对' : '答错'}</strong>
-                            </div>
-                            <h3>{item.prompt}</h3>
-                            <p>你的答案：{item.selected}</p>
-                            {!item.isCorrect ? <p>正确答案：{item.answer}</p> : null}
-                            <p>{item.explanation}</p>
-                          </article>
-                        ))}
-                      </div>
+                      <section className="review-section">
+                        <div className="review-section-head">
+                          <h3>耻辱柱</h3>
+                          <span>累计 {shameListCount} 题</span>
+                        </div>
+
+                        {shameListCount ? (
+                          <div className="review-list" style={reviewListStyle} role="list" aria-label="错题列表">
+                            {currentSubjectShameList.map((item, index) => (
+                              <article key={item.id} className="review-card">
+                                <div className="review-head">
+                                  <span>第 {index + 1} 题</span>
+                                  <strong className="bad">答错</strong>
+                                </div>
+                                <h3>{item.prompt}</h3>
+                                <p>你的答案：{item.selected}</p>
+                                <p>正确答案：{item.answer}</p>
+                                <p>{item.explanation}</p>
+                              </article>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="review-empty">
+                            <strong>当前学科还没有耻辱柱记录。</strong>
+                            <p>只显示当前学科的累计错题，同一道题只记录一次。</p>
+                          </div>
+                        )}
+                      </section>
                     </div>
                     </div>
                   </div>
@@ -506,30 +934,47 @@ export default function App() {
                 </div>
 
                 <div className="result-actions">
-                  <button type="button" className="primary-button" onClick={() => startRound(selectedSubject)}>
-                    {copy.resultAction}
+                  <button
+                    type="button"
+                    className="primary-button"
+                    onClick={() => startRound(selectedSubject, selectedDifficulty)}
+                    disabled={currentDifficultyRemainingCount === 0}
+                  >
+                    {currentDifficultyRemainingCount === 0 ? '当前难度已答完' : copy.resultAction}
                   </button>
                   <button type="button" className="ghost-button" onClick={backToHome}>
                     重新选科目
                   </button>
                 </div>
 
-                <div className="review-list">
-                  {history.map((item, index) => (
-                    <article key={item.id} className="review-card">
-                      <div className="review-head">
-                        <span>第 {index + 1} 题</span>
-                        <strong className={item.isCorrect ? 'ok' : 'bad'}>
-                          {item.isCorrect ? '答对' : '答错'}
-                        </strong>
-                      </div>
-                      <h3>{item.prompt}</h3>
-                      <p>你的答案：{item.selected}</p>
-                      {!item.isCorrect ? <p>正确答案：{item.answer}</p> : null}
-                      <p>{item.explanation}</p>
-                    </article>
-                  ))}
-                </div>
+                <section className="review-section">
+                  <div className="review-section-head">
+                    <h3>耻辱柱</h3>
+                    <span>累计 {shameListCount} 题</span>
+                  </div>
+
+                  {shameListCount ? (
+                    <div className="review-list" style={reviewListStyle} role="list" aria-label="错题列表">
+                      {currentSubjectShameList.map((item, index) => (
+                        <article key={item.id} className="review-card">
+                          <div className="review-head">
+                            <span>第 {index + 1} 题</span>
+                            <strong className="bad">答错</strong>
+                          </div>
+                          <h3>{item.prompt}</h3>
+                          <p>你的答案：{item.selected}</p>
+                          <p>正确答案：{item.answer}</p>
+                          <p>{item.explanation}</p>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="review-empty">
+                      <strong>当前学科还没有耻辱柱记录。</strong>
+                      <p>只显示当前学科的累计错题，同一道题只记录一次。</p>
+                    </div>
+                  )}
+                </section>
               </>
             ) : null}
           </div>

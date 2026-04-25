@@ -1,0 +1,35 @@
+[2m12:35:52[22m [31m[1m[vite][22m[39m Pre-transform error: Failed to load url /src/data/generatedQuestions.js (resolved id: D:/Users/MBri/Desktop/web_test/dxwm/src/data/generatedQuestions.js) in D:/Users/MBri/Desktop/web_test/dxwm/src/data/questions.js. Does the file exist?
+[2m12:48:34[22m [31m[1m[vite][22m[39m Pre-transform error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+[2m12:48:34[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Users/MBri/Desktop/web_test/dxwm/src/data/questions.js[39m:7:15
+[33m  5  |      key: 'chinese',
+  6  |      name: '璇枃',
+  7  |      short: '璇?,
+     |                ^
+  8  |      description: '瀛楄瘝銆佹枃瀛﹀父璇嗐€侀槄璇诲熀纭€銆傛寜鐞嗚涓嶈鍦ㄨ繖閲屾憯璺ゃ€?,
+  9  |    },[39m
+      at TransformPluginContext._formatError (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41)
+      at TransformPluginContext.error (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16)
+      at TransformPluginContext.transform (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64259:14)
+      at async PluginContainer.transform (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18)
+      at async loadAndTransform (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27)
+      at async viteTransformMiddleware (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:62106:24)
+[2m12:49:13[22m [31m[1m[vite][22m[39m Pre-transform error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+[2m12:49:13[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Users/MBri/Desktop/web_test/dxwm/src/data/questions.js[39m:41:36
+[33m  39 |        id: 'cn-1',
+  40 |        subject: '璇枃',
+  41 |        prompt: '鈥滃簥鍓嶆槑鏈堝厜鈥濈殑涓嬩竴鍙ユ槸锛?,
+     |                                     ^
+  42 |        options: ['鐤戞槸鍦颁笂闇?, '浣庡ご鎬濇晠涔?, '涓惧ご鏈涙槑鏈?, '鏄庢湀鏉鹃棿鐓?],
+  43 |        answer: '鐤戞槸鍦颁笂闇?,[39m
+      at TransformPluginContext._formatError (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41)
+      at TransformPluginContext.error (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16)
+      at TransformPluginContext.transform (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64259:14)
+      at async PluginContainer.transform (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18)
+      at async loadAndTransform (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27)
+      at async viteTransformMiddleware (file:///D:/Users/MBri/Desktop/web_test/dxwm/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:62106:24)
+[2m12:49:29[22m [31m[1m[vite][22m[39m Pre-transform error: Failed to load url /src/data/questions.js (resolved id: D:/Users/MBri/Desktop/web_test/dxwm/src/data/questions.js) in D:/Users/MBri/Desktop/web_test/dxwm/src/App.jsx. Does the file exist?
+^C^C
