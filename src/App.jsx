@@ -69,6 +69,33 @@ const SUBJECT_THEME_META = {
   },
 }
 
+const SHARE_THEME_PALETTES = {
+  glass: {
+    background: ['#eef8ff', '#fff6df', '#ffeef3'],
+    card: '#ffffff',
+    frame: '#dbeafe',
+    accent: '#1f9fff',
+    text: '#17324d',
+    muted: '#5f738a',
+  },
+  kawaii: {
+    background: ['#fff1f5', '#fff7d6', '#e0f2fe'],
+    card: '#fffdfd',
+    frame: '#ffb7c5',
+    accent: '#ff7d9b',
+    text: '#5d4a66',
+    muted: '#8c7b93',
+  },
+  anime: {
+    background: ['#fefce8', '#e0f2fe', '#fce7f3'],
+    card: '#fffef7',
+    frame: '#1e293b',
+    accent: '#fde047',
+    text: '#1e293b',
+    muted: '#64748b',
+  },
+}
+
 function shuffle(items) {
   const result = [...items]
 
@@ -314,6 +341,163 @@ function getReviewListStyle(theme, count) {
   }
 }
 
+function buildShareUrl() {
+  if (typeof window === 'undefined') return ''
+
+  return `${window.location.origin}${window.location.pathname}`
+}
+
+function buildResultShareText({ title, subjectName, difficultyLabel, score, total, accuracy, judgement, description, url }) {
+  const subjectLine = difficultyLabel ? `${subjectName} · ${difficultyLabel}` : subjectName
+
+  return [
+    `我在《${title}》里测了 ${subjectLine}`,
+    `得分 ${score}/${total}，正确率 ${accuracy}%`,
+    judgement,
+    description,
+    url,
+  ].join('\n')
+}
+
+function wrapCanvasText(context, text, maxWidth) {
+  const lines = []
+  let currentLine = ''
+
+  for (const char of text) {
+    const nextLine = `${currentLine}${char}`
+
+    if (context.measureText(nextLine).width <= maxWidth || !currentLine) {
+      currentLine = nextLine
+      continue
+    }
+
+    lines.push(currentLine)
+    currentLine = char
+  }
+
+  if (currentLine) {
+    lines.push(currentLine)
+  }
+
+  return lines
+}
+
+function drawRoundedRect(context, x, y, width, height, radius) {
+  const actualRadius = Math.min(radius, width / 2, height / 2)
+
+  context.beginPath()
+  context.moveTo(x + actualRadius, y)
+  context.lineTo(x + width - actualRadius, y)
+  context.quadraticCurveTo(x + width, y, x + width, y + actualRadius)
+  context.lineTo(x + width, y + height - actualRadius)
+  context.quadraticCurveTo(x + width, y + height, x + width - actualRadius, y + height)
+  context.lineTo(x + actualRadius, y + height)
+  context.quadraticCurveTo(x, y + height, x, y + height - actualRadius)
+  context.lineTo(x, y + actualRadius)
+  context.quadraticCurveTo(x, y, x + actualRadius, y)
+  context.closePath()
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob)
+        return
+      }
+
+      reject(new Error('Canvas export failed'))
+    }, 'image/png')
+  })
+}
+
+async function createResultShareImage({
+  theme,
+  title,
+  subjectName,
+  difficultyLabel,
+  score,
+  total,
+  accuracy,
+  judgement,
+  description,
+  emoji,
+}) {
+  const palette = SHARE_THEME_PALETTES[theme] || SHARE_THEME_PALETTES.glass
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+
+  canvas.width = 1080
+  canvas.height = 1350
+
+  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height)
+  gradient.addColorStop(0, palette.background[0])
+  gradient.addColorStop(0.5, palette.background[1])
+  gradient.addColorStop(1, palette.background[2])
+
+  context.fillStyle = gradient
+  context.fillRect(0, 0, canvas.width, canvas.height)
+
+  drawRoundedRect(context, 76, 88, 928, 1174, theme === 'anime' ? 24 : 52)
+  context.fillStyle = palette.card
+  context.fill()
+  context.lineWidth = theme === 'anime' ? 8 : 4
+  context.strokeStyle = palette.frame
+  context.stroke()
+
+  context.fillStyle = palette.accent
+  drawRoundedRect(context, 130, 138, 220, 64, 999)
+  context.fill()
+
+  context.fillStyle = theme === 'anime' ? '#1e293b' : '#ffffff'
+  context.font = "700 30px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.fillText('答题结果', 240, 170)
+
+  context.textAlign = 'left'
+  context.fillStyle = palette.text
+  context.font = "800 64px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillText(title, 130, 290)
+
+  context.font = "600 34px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillStyle = palette.muted
+  context.fillText(difficultyLabel ? `${subjectName} · ${difficultyLabel}` : subjectName, 130, 350)
+
+  context.font = "700 152px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif"
+  context.fillText(emoji, 130, 550)
+
+  context.fillStyle = palette.text
+  context.font = "900 74px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillText(`${score}/${total}`, 340, 520)
+
+  context.font = "600 32px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillStyle = palette.muted
+  context.fillText(`正确率 ${accuracy}%`, 346, 572)
+
+  drawRoundedRect(context, 130, 640, 820, 124, theme === 'anime' ? 24 : 36)
+  context.fillStyle = `${palette.accent}22`
+  context.fill()
+
+  context.fillStyle = palette.text
+  context.font = "800 48px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillText(judgement, 162, 712)
+
+  context.font = "500 34px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillStyle = palette.text
+  const descriptionLines = wrapCanvasText(context, description, 756).slice(0, 4)
+
+  descriptionLines.forEach((line, index) => {
+    context.fillText(line, 130, 860 + index * 56)
+  })
+
+  context.fillStyle = palette.muted
+  context.font = "500 28px 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
+  context.fillText('来自《大学文凭能有多文盲》', 130, 1160)
+
+  return canvasToBlob(canvas)
+}
+
 function ThemeBackdrop({ theme }) {
   if (theme === 'anime') {
     return (
@@ -365,6 +549,8 @@ export default function App() {
   const [currentRoundMistakes, setCurrentRoundMistakes] = useState([])
   const [answeredQuestionIds, setAnsweredQuestionIds] = useState(() => loadAnsweredQuestionIds())
   const [musicEnabled, setMusicEnabled] = useState(true)
+  const [shareMenuOpen, setShareMenuOpen] = useState(false)
+  const [shareStatus, setShareStatus] = useState('')
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('dxwm-theme-v3') || 'anime'
@@ -473,6 +659,38 @@ export default function App() {
     () => getReviewListStyle(theme, currentRoundMistakeCount),
     [theme, currentRoundMistakeCount],
   )
+  const resultSharePayload = useMemo(() => {
+    if (phase !== 'result' || !summary || !currentSubject) return null
+
+    return {
+      title: copy.homeTitle,
+      subjectName: currentSubject.name,
+      difficultyLabel: currentDifficulty?.label || '',
+      score,
+      total: summary.total,
+      accuracy: summary.accuracy,
+      judgement: summary.judgement,
+      description: summary.description,
+      emoji: summary.emoji,
+      theme,
+      url: buildShareUrl(),
+    }
+  }, [copy.homeTitle, currentDifficulty?.label, currentSubject, phase, score, summary, theme])
+
+  useEffect(() => {
+    setShareMenuOpen(false)
+    setShareStatus('')
+  }, [phase])
+
+  useEffect(() => {
+    if (!shareStatus) return undefined
+
+    const timer = window.setTimeout(() => {
+      setShareStatus('')
+    }, 2200)
+
+    return () => window.clearTimeout(timer)
+  }, [shareStatus])
 
   const stopBackgroundMusic = async () => {
     if (!audioRef.current) return
@@ -641,6 +859,66 @@ export default function App() {
     setMusicEnabled(true)
   }
 
+  const copyShareText = async (value, successMessage) => {
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      setShareStatus('当前环境不支持剪贴板')
+      return
+    }
+
+    await navigator.clipboard.writeText(value)
+    setShareStatus(successMessage)
+  }
+
+  const handleShareLink = async () => {
+    if (!resultSharePayload) return
+
+    try {
+      await copyShareText(resultSharePayload.url, '链接已复制')
+    } catch {
+      setShareStatus('复制链接失败')
+    }
+  }
+
+  const handleShareCard = async () => {
+    if (!resultSharePayload) return
+
+    try {
+      const shareText = buildResultShareText(resultSharePayload)
+      await copyShareText(shareText, '卡片文案已复制')
+    } catch {
+      setShareStatus('复制卡片失败')
+    }
+  }
+
+  const handleShareImage = async () => {
+    if (!resultSharePayload || typeof window === 'undefined') return
+
+    try {
+      const blob = await createResultShareImage(resultSharePayload)
+      const file = new File([blob], 'dxwm-result.png', { type: 'image/png' })
+
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+        await navigator.share({
+          title: resultSharePayload.title,
+          text: `${resultSharePayload.judgement} · ${resultSharePayload.score}/${resultSharePayload.total}`,
+          files: [file],
+        })
+        setShareStatus('已调起图片分享')
+        return
+      }
+
+      const objectUrl = window.URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = objectUrl
+      anchor.download = 'dxwm-result.png'
+      anchor.click()
+      window.URL.revokeObjectURL(objectUrl)
+      setShareStatus('图片已下载')
+    } catch {
+      setShareStatus('生成图片失败')
+    }
+  }
+
   return (
     <div className="app-shell">
       <ThemeBackdrop theme={theme} />
@@ -655,6 +933,38 @@ export default function App() {
           {musicEnabled ? '背景音乐 开' : '背景音乐 关'}
         </button>
       </div>
+
+      {phase === 'result' && resultSharePayload ? (
+        <div className="floating-share-dock">
+          <div className={`share-panel ${shareMenuOpen ? 'is-open' : ''}`}>
+            <button
+              type="button"
+              className="share-toggle"
+              onClick={() => setShareMenuOpen((open) => !open)}
+              aria-expanded={shareMenuOpen}
+              aria-haspopup="true"
+            >
+              分享
+            </button>
+
+            {shareMenuOpen ? (
+              <div className="share-menu" role="menu" aria-label="分享答题结果">
+                <button type="button" className="share-action" onClick={handleShareLink}>
+                  链接
+                </button>
+                <button type="button" className="share-action" onClick={handleShareCard}>
+                  卡片
+                </button>
+                <button type="button" className="share-action" onClick={handleShareImage}>
+                  图片
+                </button>
+              </div>
+            ) : null}
+
+            {shareStatus ? <p className="share-status">{shareStatus}</p> : null}
+          </div>
+        </div>
+      ) : null}
 
       <div className="floating-theme-dock">
         <div
