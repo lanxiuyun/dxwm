@@ -61,11 +61,11 @@ const SUBJECT_THEME_META = {
     chemistry: { icon: '🧪', accent: '#e2c0ff', short: '神奇化学' },
   },
   anime: {
-    chinese: { icon: '🖋️', accent: '#7dd3fc', short: '国文' },
-    math: { icon: '🔢', accent: '#fbbf24', short: '数理' },
-    english: { icon: '🗣️', accent: '#4ade80', short: '外语' },
+    chinese: { icon: '🖋️', accent: '#7dd3fc', short: '语文' },
+    math: { icon: '🔢', accent: '#fbbf24', short: '数学' },
+    english: { icon: '🗣️', accent: '#4ade80', short: '英语' },
     physics: { icon: '⚡', accent: '#f472b6', short: '物理' },
-    chemistry: { icon: '🧪', accent: '#a78bfa', short: '科学' },
+    chemistry: { icon: '🧪', accent: '#a78bfa', short: '化学' },
   },
 }
 
@@ -173,8 +173,12 @@ function getAvailableQuestions(subjectKey, difficultyKey, answeredQuestionIds, i
 
 function buildRound(subjectKey, difficultyKey, answeredQuestionIds, isDev) {
   const availableQuestions = shuffle(getAvailableQuestions(subjectKey, difficultyKey, answeredQuestionIds, isDev))
+  const roundQuestions = pickDiversifiedRound(availableQuestions)
 
-  return pickDiversifiedRound(availableQuestions)
+  return roundQuestions.map((question) => ({
+    ...question,
+    options: shuffle(question.options),
+  }))
 }
 
 function loadShameList() {
@@ -358,6 +362,7 @@ export default function App() {
   const [locked, setLocked] = useState(false)
   const [score, setScore] = useState(0)
   const [shameList, setShameList] = useState(() => loadShameList())
+  const [currentRoundMistakes, setCurrentRoundMistakes] = useState([])
   const [answeredQuestionIds, setAnsweredQuestionIds] = useState(() => loadAnsweredQuestionIds())
   const [musicEnabled, setMusicEnabled] = useState(true)
   const [theme, setTheme] = useState(() => {
@@ -447,17 +452,10 @@ export default function App() {
       emoji: getResultEmoji(score, questions.length, theme),
     }
   }, [phase, questions.length, score, theme])
-  const currentSubjectShameList = useMemo(() => {
-    if (!selectedSubject) return []
-
-    return shameList.filter(
-      (item) => item.subjectKey === selectedSubject || item.subject === currentSubject?.name,
-    )
-  }, [currentSubject?.name, selectedSubject, shameList])
   const currentDifficultyRemainingCount = selectedDifficulty
     ? availableQuestionCountByDifficulty[selectedDifficulty] ?? 0
     : 0
-  const shameListCount = currentSubjectShameList.length
+  const currentRoundMistakeCount = currentRoundMistakes.length
   const homeStats = useMemo(() => {
     const wrongCount = shameList.length
     const totalAnswered = answeredQuestionIds.length
@@ -471,7 +469,10 @@ export default function App() {
     }
   }, [answeredQuestionIds.length, shameList.length])
   const animeScene = phase === 'result' && summary ? getAnimeResultScene(score, summary.total) : null
-  const reviewListStyle = useMemo(() => getReviewListStyle(theme, shameListCount), [theme, shameListCount])
+  const reviewListStyle = useMemo(
+    () => getReviewListStyle(theme, currentRoundMistakeCount),
+    [theme, currentRoundMistakeCount],
+  )
 
   const stopBackgroundMusic = async () => {
     if (!audioRef.current) return
@@ -561,6 +562,7 @@ export default function App() {
     setSelectedOption(null)
     setLocked(false)
     setScore(0)
+    setCurrentRoundMistakes([])
     setPhase('playing')
   }
 
@@ -584,6 +586,16 @@ export default function App() {
     if (isCorrect) {
       setScore((currentScore) => currentScore + 1)
     } else {
+      setCurrentRoundMistakes((current) => [
+        ...current,
+        {
+          id: currentQuestion.id,
+          prompt: currentQuestion.prompt,
+          selected: option,
+          answer: currentQuestion.answer,
+          explanation: currentQuestion.explanation,
+        },
+      ])
       setShameList((current) => {
         if (current.some((item) => item.id === currentQuestion.id)) {
           return current
@@ -617,6 +629,7 @@ export default function App() {
     setSelectedOption(null)
     setLocked(false)
     setScore(0)
+    setCurrentRoundMistakes([])
   }
 
   const toggleMusic = async () => {
@@ -718,6 +731,7 @@ export default function App() {
                     const remainingCount = availableQuestionCountBySubject[subject.key] ?? 0
                     const totalCount = totalQuestionCountBySubject[subject.key] ?? 0
                     const difficultySummary = difficultySummaryBySubject[subject.key] ?? ''
+                    const shouldShowFullName = subjectMeta.short !== subject.name
 
                     return (
                       <button
@@ -731,7 +745,7 @@ export default function App() {
                         <span className="subject-icon">{subjectMeta.icon}</span>
                         <span className="subject-copy">
                           <strong>{subjectMeta.short}</strong>
-                          <small>{subject.name}</small>
+                          {shouldShowFullName ? <small>{subject.name}</small> : null}
                           <small>
                             {remainingCount
                               ? `${IS_DEV ? '当前可抽' : '剩余'} ${remainingCount} 题`
@@ -758,7 +772,7 @@ export default function App() {
                   </button>
                 </div>
 
-                <h2 className="question-title">选择难度</h2>
+                <h2 className="question-title difficulty-title">选择难度</h2>
                 <p className="lead">先选一个阶段，再进入本轮 10 题。</p>
                 {IS_DEV ? (
                   <div className="dev-dataset-panel compact" aria-label="当前学科题库信息">
@@ -901,12 +915,12 @@ export default function App() {
                       <section className="review-section">
                         <div className="review-section-head">
                           <h3>耻辱柱</h3>
-                          <span>累计 {shameListCount} 题</span>
+                          <span>本轮 {currentRoundMistakeCount} 题</span>
                         </div>
 
-                        {shameListCount ? (
+                        {currentRoundMistakeCount ? (
                           <div className="review-list" style={reviewListStyle} role="list" aria-label="错题列表">
-                            {currentSubjectShameList.map((item, index) => (
+                            {currentRoundMistakes.map((item, index) => (
                               <article key={item.id} className="review-card">
                                 <div className="review-head">
                                   <span>第 {index + 1} 题</span>
@@ -921,8 +935,8 @@ export default function App() {
                           </div>
                         ) : (
                           <div className="review-empty">
-                            <strong>当前学科还没有耻辱柱记录。</strong>
-                            <p>只显示当前学科的累计错题，同一道题只记录一次。</p>
+                            <strong>本轮零失误，耻辱柱暂时空着。</strong>
+                            <p>这里只显示当前回合答错的题。</p>
                           </div>
                         )}
                       </section>
@@ -972,12 +986,12 @@ export default function App() {
                 <section className="review-section">
                   <div className="review-section-head">
                     <h3>耻辱柱</h3>
-                    <span>累计 {shameListCount} 题</span>
+                    <span>本轮 {currentRoundMistakeCount} 题</span>
                   </div>
 
-                  {shameListCount ? (
+                  {currentRoundMistakeCount ? (
                     <div className="review-list" style={reviewListStyle} role="list" aria-label="错题列表">
-                      {currentSubjectShameList.map((item, index) => (
+                      {currentRoundMistakes.map((item, index) => (
                         <article key={item.id} className="review-card">
                           <div className="review-head">
                             <span>第 {index + 1} 题</span>
@@ -992,8 +1006,8 @@ export default function App() {
                     </div>
                   ) : (
                     <div className="review-empty">
-                      <strong>当前学科还没有耻辱柱记录。</strong>
-                      <p>只显示当前学科的累计错题，同一道题只记录一次。</p>
+                      <strong>本轮零失误，耻辱柱暂时空着。</strong>
+                      <p>这里只显示当前回合答错的题。</p>
                     </div>
                   )}
                 </section>
