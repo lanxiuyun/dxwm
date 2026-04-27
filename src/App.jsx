@@ -9,8 +9,11 @@ const REVIEW_LIST_THEME_CONFIG = {
   kawaii: { cardMinHeight: 164, gap: 14, maxVisibleCards: 3 },
   anime: { cardMinHeight: 172, gap: 14, maxVisibleCards: 2 },
 }
-const ANIME_RESULT_LEFT_IMAGE = '/anime-result-left.png'
-const ANIME_RESULT_RIGHT_IMAGE = '/anime-result-right.png'
+const ANIME_RESULT_PC_LEFT_IMAGE = '/PCanime-result-left.png'
+const ANIME_RESULT_PC_RIGHT_IMAGE = '/PCanime-result-right.png'
+const ANIME_RESULT_APP_LEFT_IMAGE = '/Appanime-result-left.png'
+const ANIME_RESULT_APP_RIGHT_IMAGE = '/Appanime-result-right.png'
+const ANIME_APP_BREAKPOINT = 768
 const BACKGROUND_MUSIC_SRC = '/quiz-bgm.flac'
 const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list-v3'
 const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions-v3'
@@ -551,6 +554,11 @@ export default function App() {
   const [musicEnabled, setMusicEnabled] = useState(true)
   const [shareMenuOpen, setShareMenuOpen] = useState(false)
   const [shareStatus, setShareStatus] = useState('')
+  const [isMobileViewport, setIsMobileViewport] = useState(() => {
+    if (typeof window === 'undefined') return false
+
+    return window.matchMedia(`(max-width: ${ANIME_APP_BREAKPOINT}px)`).matches
+  })
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('dxwm-theme-v3') || 'anime'
@@ -611,6 +619,25 @@ export default function App() {
   }, [theme])
 
   useEffect(() => {
+    if (typeof window === 'undefined') return undefined
+
+    const mediaQuery = window.matchMedia(`(max-width: ${ANIME_APP_BREAKPOINT}px)`)
+    const handleChange = (event) => {
+      setIsMobileViewport(event.matches)
+    }
+
+    setIsMobileViewport(mediaQuery.matches)
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    }
+
+    mediaQuery.addListener(handleChange)
+    return () => mediaQuery.removeListener(handleChange)
+  }, [])
+
+  useEffect(() => {
     if (!locked) return
 
     const timer = window.setTimeout(() => {
@@ -659,6 +686,15 @@ export default function App() {
     () => getReviewListStyle(theme, currentRoundMistakeCount),
     [theme, currentRoundMistakeCount],
   )
+  const animeResultImages = isMobileViewport
+    ? {
+        left: ANIME_RESULT_APP_LEFT_IMAGE,
+        right: ANIME_RESULT_APP_RIGHT_IMAGE,
+      }
+    : {
+        left: ANIME_RESULT_PC_LEFT_IMAGE,
+        right: ANIME_RESULT_PC_RIGHT_IMAGE,
+      }
   const resultSharePayload = useMemo(() => {
     if (phase !== 'result' || !summary || !currentSubject) return null
 
@@ -912,7 +948,9 @@ export default function App() {
       anchor.href = objectUrl
       anchor.download = 'dxwm-result.png'
       anchor.click()
-      window.URL.revokeObjectURL(objectUrl)
+      window.setTimeout(() => {
+        window.URL.revokeObjectURL(objectUrl)
+      }, 1000)
       setShareStatus('图片已下载')
     } catch {
       setShareStatus('生成图片失败')
@@ -920,7 +958,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell phase-${phase}`}>
       <ThemeBackdrop theme={theme} />
 
       <div className="floating-music-dock">
@@ -1041,7 +1079,7 @@ export default function App() {
                     const remainingCount = availableQuestionCountBySubject[subject.key] ?? 0
                     const totalCount = totalQuestionCountBySubject[subject.key] ?? 0
                     const difficultySummary = difficultySummaryBySubject[subject.key] ?? ''
-                    const shouldShowFullName = subjectMeta.short !== subject.name
+                    const shouldShowFullName = theme !== 'kawaii' && subjectMeta.short !== subject.name
 
                     return (
                       <button
@@ -1183,8 +1221,8 @@ export default function App() {
                 {theme === 'anime' && animeScene ? (
                   <div className="anime-result-scene">
                     <div className="anime-result-stage">
-                      <img className="anime-scene-side side-left" src={ANIME_RESULT_LEFT_IMAGE} alt="" aria-hidden="true" />
-                      <img className="anime-scene-side side-right" src={ANIME_RESULT_RIGHT_IMAGE} alt="" aria-hidden="true" />
+                      <img className="anime-scene-side side-left" src={animeResultImages.left} alt="" aria-hidden="true" />
+                      <img className="anime-scene-side side-right" src={animeResultImages.right} alt="" aria-hidden="true" />
 
                     <div className="speech-bubble bubble-left-bottom">{animeScene.bubbles[2]}</div>
                     <div className="speech-bubble bubble-right-bottom">{animeScene.bubbles[3]}</div>
