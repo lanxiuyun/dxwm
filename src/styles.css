@@ -217,11 +217,13 @@ button {
   width: min(100%, 1280px);
   margin: 0 auto;
   display: grid;
-  place-items: center;
-  padding: 28px clamp(20px, 4vw, 48px) 120px;
+  grid-template-rows: minmax(72px, 1fr) auto minmax(120px, 1fr);
+  justify-items: center;
+  padding: 0 clamp(20px, 4vw, 48px);
 }
 
 .screen {
+  grid-row: 2;
   width: 100%;
   max-width: 480px;
 }
@@ -2235,6 +2237,15 @@ button {
 }
 
 @media (max-width: 768px) {
+  .app-shell {
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  .app {
+    grid-template-rows: minmax(88px, 1fr) auto minmax(104px, 1fr);
+  }
+
   [data-theme='anime'] {
     --anime-result-card-min-width: 100%;
     --anime-content-safe-x: 14px;
@@ -2371,7 +2382,8 @@ button {
 
   .app {
     width: 100%;
-    padding: 18px 12px 84px;
+    grid-template-rows: minmax(84px, 1fr) auto minmax(92px, 1fr);
+    padding: 0 12px;
   }
 
   .floating-theme-capsule {
