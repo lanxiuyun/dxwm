@@ -4,6 +4,7 @@ import { QUESTIONS_BY_SUBJECT, SUBJECTS } from './data/questions'
 const IS_DEV = false
 const ROUND_SIZE = 10
 const THEMES = ['glass', 'kawaii', 'anime']
+const VISIBLE_THEMES = THEMES.filter((theme) => theme !== 'glass')
 const PUBLIC_ASSET_BASE = import.meta.env.BASE_URL
 const getPublicAssetUrl = (filename) => `${PUBLIC_ASSET_BASE}${filename}`
 const REVIEW_LIST_THEME_CONFIG = {
@@ -563,7 +564,9 @@ export default function App() {
   })
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('dxwm-theme-v3') || 'anime'
+      const savedTheme = localStorage.getItem('dxwm-theme-v3')
+
+      return VISIBLE_THEMES.includes(savedTheme) ? savedTheme : 'anime'
     }
 
     return 'anime'
@@ -1013,7 +1016,7 @@ export default function App() {
           aria-label="主题选择"
         >
           <div className="theme-pill-slider" aria-hidden="true" />
-          {THEMES.map((item) => (
+          {VISIBLE_THEMES.map((item) => (
             <button
               key={item}
               type="button"
