@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0",
+    "serve:dist": "node scripts/serve-static.mjs dist 8080",
+    "serve:deploy": "node scripts/serve-static.mjs deploy-dist 8080"
   },
   "dependencies": {
     "react": "^18.3.1",
