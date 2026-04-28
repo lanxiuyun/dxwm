@@ -21,6 +21,7 @@ yarn-error.log*
 # Cache
 .vite/
 .cache/
+.runtime/
 
 # OS files
 .DS_Store
