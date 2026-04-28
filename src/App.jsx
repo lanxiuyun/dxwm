@@ -4,17 +4,19 @@ import { QUESTIONS_BY_SUBJECT, SUBJECTS } from './data/questions'
 const IS_DEV = false
 const ROUND_SIZE = 10
 const THEMES = ['glass', 'kawaii', 'anime']
+const PUBLIC_ASSET_BASE = import.meta.env.BASE_URL
+const getPublicAssetUrl = (filename) => `${PUBLIC_ASSET_BASE}${filename}`
 const REVIEW_LIST_THEME_CONFIG = {
   glass: { cardMinHeight: 156, gap: 14, maxVisibleCards: 3 },
   kawaii: { cardMinHeight: 164, gap: 14, maxVisibleCards: 3 },
   anime: { cardMinHeight: 172, gap: 14, maxVisibleCards: 2 },
 }
-const ANIME_RESULT_PC_LEFT_IMAGE = '/PCanime-result-left.png'
-const ANIME_RESULT_PC_RIGHT_IMAGE = '/PCanime-result-right.png'
-const ANIME_RESULT_APP_LEFT_IMAGE = '/Appanime-result-left.png'
-const ANIME_RESULT_APP_RIGHT_IMAGE = '/Appanime-result-right.png'
+const ANIME_RESULT_PC_LEFT_IMAGE = getPublicAssetUrl('PCanime-result-left.png')
+const ANIME_RESULT_PC_RIGHT_IMAGE = getPublicAssetUrl('PCanime-result-right.png')
+const ANIME_RESULT_APP_LEFT_IMAGE = getPublicAssetUrl('Appanime-result-left.png')
+const ANIME_RESULT_APP_RIGHT_IMAGE = getPublicAssetUrl('Appanime-result-right.png')
 const ANIME_APP_BREAKPOINT = 768
-const BACKGROUND_MUSIC_SRC = '/Menu_Main.mp3'
+const BACKGROUND_MUSIC_SRC = getPublicAssetUrl('Menu_Main.mp3')
 const SHAME_LIST_STORAGE_KEY = 'dxwm-shame-list-v3'
 const ANSWERED_QUESTION_STORAGE_KEY = 'dxwm-answered-questions-v3'
 const DIFFICULTIES = [
