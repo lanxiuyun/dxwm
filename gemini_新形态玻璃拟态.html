@@ -1,0 +1,357 @@
+<!-- 这种设计风格在现代 UI 设计中被称为 **新形态玻璃拟态 (Glassmorphism)** 结合了 **多巴胺极简主义 (Dopamine Minimalism)**。
+
+具体来说，它包含以下几种核心美学元素：
+
+1.  **玻璃拟态 (Glassmorphism)**：
+    * **特征**：半透明的背景、高斯模糊（Backdrop Blur）、柔和的白色描边。
+    * **观感**：通过这种“磨砂玻璃”的质感，让界面看起来非常轻盈、通透，解决了原图中深色块带来的压抑感，增加了你要求的“呼吸感”。
+
+2.  **多巴胺色彩 (Dopamine Colors)**：
+    * **特征**：使用明亮但具有高饱和度的糖果色（如靛蓝、琥珀黄、翡翠绿、玫瑰粉）作为学科主题色。
+    * **观感**：这种色彩能激发大脑的愉悦感，把枯燥的“考试答题”包装成一种有趣的“游戏挑战”，非常符合“大学文凭能有多文盲”这种自带槽点的趣味主题。
+
+3.  **流体动效 (Fluid Motion)**：
+    * **特征**：背景中缓缓移动的彩色气泡（Blob），以及卡片入场时的位移偏移。
+    * **观感**：这就是你提到的“灵动性”，让网页不再是死板的静态页面，而是像是有生命、在呼吸的有机体。
+
+4.  **新中式教育风 (Modern Edu-Style)**：
+    * **特征**：大字重（Bold Typography）、留白处理、圆润的倒角。
+    * **观感**：借鉴了现代学习类 App（如多邻国、知识星球等）的设计语言，既有权威感又不失活泼感。
+
+总的来说，这是一种**轻量化、高交互感**的设计风格，旨在降低用户的认知负担，提高参与的趣味性。 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学文凭能有多文盲 - 挑战你的基础知识</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-bg: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --accent-color: #6366f1;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f5f3ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            border-radius: 2rem;
+            width: 100%;
+            max-width: 450px;
+            padding: 2.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .subject-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-color);
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-radius: 1.2rem;
+            background: white;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .option-index {
+            width: 32px;
+            height: 32px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+
+        .selected .option-index {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 20%;
+            transition: width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* 呼吸动画背景 */
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: 1;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(10%, 10%); }
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .subject-card {
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .subject-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .subject-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="blob"></div>
+
+    <div id="game-container" class="glass-card animate__animated animate__fadeIn">
+        <!-- 首页：学科选择 -->
+        <div id="home-screen">
+            <h1 class="text-3xl font-black text-gray-800 mb-2">大学文凭能有多文盲</h1>
+            <p class="text-gray-500 mb-8">别划走，试试这些“基础题”...</p>
+            
+            <div class="subject-grid">
+                <div class="subject-card" onclick="startQuiz('chinese', '#6366f1')">
+                    <span class="subject-icon">🏮</span>
+                    <span class="font-bold">语文</span>
+                </div>
+                <div class="subject-card" onclick="startQuiz('math', '#f59e0b')">
+                    <span class="subject-icon">📐</span>
+                    <span class="font-bold">数学</span>
+                </div>
+                <div class="subject-card" onclick="startQuiz('english', '#10b981')">
+                    <span class="subject-icon">🌍</span>
+                    <span class="font-bold">英语</span>
+                </div>
+                <div class="subject-card" onclick="startQuiz('science', '#ec4899')">
+                    <span class="subject-icon">🧪</span>
+                    <span class="font-bold">理综</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 答题页 -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <span id="subject-label" class="subject-tag">学科</span>
+                <span class="text-sm font-medium text-gray-400" id="progress-text">1 / 5</span>
+            </div>
+
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+
+            <h2 id="question-text" class="text-2xl font-bold text-gray-800 my-6 leading-tight">
+                加载中...
+            </h2>
+
+            <div id="options-container">
+                <!-- 动态生成选项 -->
+            </div>
+
+            <p class="text-xs text-gray-400 mt-8 text-center">点击选项即刻作答 · 保持专注</p>
+        </div>
+
+        <!-- 结算页 -->
+        <div id="result-screen" class="hidden text-center">
+            <div class="text-6xl mb-4" id="result-emoji">🤡</div>
+            <h2 class="text-3xl font-black text-gray-800 mb-2" id="result-title">你是真文盲啊</h2>
+            <p id="result-desc" class="text-gray-500 mb-8">5道题竟然只对了1道...</p>
+            <button onclick="location.reload()" class="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all">
+                再洗白一次
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            chinese: [
+                { q: "《滕王阁序》的作者是？", a: ["王勃", "韩愈", "柳宗元", "欧阳修"], correct: 0 },
+                { q: "“身无彩凤双飞翼”的下一句是？", a: ["心有灵犀一点通", "此情可待成追忆", "心有戚戚焉", "只是当时已惘然"], correct: 0 },
+                { q: "下列哪个词语中没有错别字？", a: ["针贬时弊", "甘拜下风", "一筹莫展", "按步就班"], correct: 2 }
+            ],
+            math: [
+                { q: "勾股定理中，直角三角形两直角边a,b与斜边c的关系是？", a: ["a+b=c", "a²+b²=c²", "ab=c²", "a²+b²=c"], correct: 1 },
+                { q: "1公顷等于多少平方米？", a: ["100", "1000", "10000", "100000"], correct: 2 }
+            ],
+            english: [
+                { q: "Which is the past participle of 'write'?", a: ["wrote", "writed", "written", "writing"], correct: 2 }
+            ],
+            science: [
+                { q: "水的沸点在标准大气压下是？", a: ["90℃", "100℃", "110℃", "120℃"], correct: 1 }
+            ]
+        };
+
+        let currentSubject = '';
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let questions = [];
+
+        function startQuiz(subject, themeColor) {
+            currentSubject = subject;
+            questions = quizData[subject];
+            currentQuestionIdx = 0;
+            score = 0;
+
+            document.documentElement.style.setProperty('--accent-color', themeColor);
+            document.body.style.background = `linear-gradient(135deg, ${themeColor}22 0%, #f5f3ff 100%)`;
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            const labelMap = { chinese: '语文', math: '数学', english: '英语', science: '理综' };
+            document.getElementById('subject-label').innerText = labelMap[subject];
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIdx];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress-text').innerText = `${currentQuestionIdx + 1} / ${questions.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentQuestionIdx + 1) / questions.length) * 100}%`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.a.forEach((opt, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'option-btn animate__animated animate__fadeInUp';
+                btn.style.animationDelay = `${idx * 0.1}s`;
+                btn.innerHTML = `
+                    <div class="option-index">${labels[idx]}</div>
+                    <div class="font-medium text-gray-700">${opt}</div>
+                `;
+                btn.onclick = () => selectOption(idx);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(idx) {
+            const q = questions[currentQuestionIdx];
+            const isCorrect = idx === q.correct;
+            if (isCorrect) score++;
+
+            // 动效反馈
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons[idx].classList.add('selected');
+            
+            setTimeout(() => {
+                currentQuestionIdx++;
+                if (currentQuestionIdx < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 500);
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const percent = score / questions.length;
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const emoji = document.getElementById('result-emoji');
+
+            if (percent === 1) {
+                emoji.innerText = '🎓';
+                title.innerText = '文凭保住了';
+                desc.innerText = `满分！你确实读过书。`;
+            } else if (percent >= 0.6) {
+                emoji.innerText = '🤔';
+                title.innerText = '勉强算识字';
+                desc.innerText = `答对 ${score} 道题。大学没白读，但不多。`;
+            } else {
+                emoji.innerText = '🤡';
+                title.innerText = '纯纯真文盲';
+                desc.innerText = `只对了 ${score} 道题。建议回小学深造。`;
+            }
+        }
+    </script>
+</body>
+</html>
